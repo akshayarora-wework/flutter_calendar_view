@@ -28,8 +28,8 @@ typedef SelectedEventTileBuilder<T extends Object?> = Widget Function(
   Rect boundary,
   DateTime startDuration,
   DateTime endDuration,
-  Function(double primaryDelta) changeStartTime,
-  Function(double primaryDelta) changeEndTime,
+  Function(double primaryDelta)? changeStartTime,
+  Function(double primaryDelta)? changeEndTime,
   Function(double primaryDelta) reschedule,
   VoidCallback onEditComplete,
 );

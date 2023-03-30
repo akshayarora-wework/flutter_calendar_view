@@ -621,8 +621,8 @@ class InteractiveDayViewState<T extends Object?>
     Rect boundary,
     DateTime startDuration,
     DateTime endDuration,
-    Function(double primaryDelta) changeStartTime,
-    Function(double primaryDelta) changeEndTime,
+    Function(double primaryDelta)? changeStartTime,
+    Function(double primaryDelta)? changeEndTime,
     Function(double primaryDelta) reschedule,
     VoidCallback onEditComplete,
   ) {
@@ -639,18 +639,10 @@ class InteractiveDayViewState<T extends Object?>
         descriptionStyle: events[0].descriptionStyle,
         selectedOutlineColor: Theme.of(context).colorScheme.onSurface,
         handleColor: Theme.of(context).colorScheme.onSurface,
-        changeEndTime: (value) {
-          changeEndTime(value);
-        },
-        changeStartTime: (value) {
-          changeStartTime(value);
-        },
-        onEditComplete: () {
-          onEditComplete();
-        },
-        reschedule: (value) {
-          reschedule(value);
-        },
+        changeEndTime: (primaryDelta) => changeEndTime?.call(primaryDelta),
+        changeStartTime: (primaryDelta) => changeStartTime?.call(primaryDelta),
+        reschedule: (value) => reschedule(value),
+        onEditComplete: () => onEditComplete(),
       );
     else
       return SizedBox.shrink();
