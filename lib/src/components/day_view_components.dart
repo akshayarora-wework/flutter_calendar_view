@@ -287,6 +287,9 @@ class SelectedRoundedEventTile extends StatelessWidget {
   /// Color of the handle.
   final Color handleColor;
 
+  /// Show handles or not.
+  final bool showHandles;
+
   /// The outline color of the tile when selected.
   final Color selectedOutlineColor;
 
@@ -318,6 +321,7 @@ class SelectedRoundedEventTile extends StatelessWidget {
     this.titleStyle,
     this.descriptionStyle,
     this.handleColor = Colors.white,
+    this.showHandles = true,
     this.selectedOutlineColor = Colors.white,
   }) : super(key: key);
 
@@ -385,40 +389,42 @@ class SelectedRoundedEventTile extends StatelessWidget {
               ],
             ),
           ),
-          Align(
-            alignment: Alignment.topRight,
-            child: GestureDetector(
-              onVerticalDragEnd: (details) {
-                onEditComplete();
-              },
-              onVerticalDragUpdate: (details) {
-                if (details.primaryDelta != null) {
-                  changeStartTime(details.primaryDelta!);
-                }
-              },
-              child: Icon(
-                Icons.circle_rounded,
-                color: handleColor,
+          if (showHandles)
+            Align(
+              alignment: Alignment.topRight,
+              child: GestureDetector(
+                onVerticalDragEnd: (details) {
+                  onEditComplete();
+                },
+                onVerticalDragUpdate: (details) {
+                  if (details.primaryDelta != null) {
+                    changeStartTime(details.primaryDelta!);
+                  }
+                },
+                child: Icon(
+                  Icons.circle_rounded,
+                  color: handleColor,
+                ),
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: GestureDetector(
-              onVerticalDragEnd: (details) {
-                onEditComplete();
-              },
-              onVerticalDragUpdate: (details) {
-                if (details.primaryDelta != null) {
-                  changeEndTime(details.primaryDelta!);
-                }
-              },
-              child: Icon(
-                Icons.circle_rounded,
-                color: handleColor,
+          if (showHandles)
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: GestureDetector(
+                onVerticalDragEnd: (details) {
+                  onEditComplete();
+                },
+                onVerticalDragUpdate: (details) {
+                  if (details.primaryDelta != null) {
+                    changeEndTime(details.primaryDelta!);
+                  }
+                },
+                child: Icon(
+                  Icons.circle_rounded,
+                  color: handleColor,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

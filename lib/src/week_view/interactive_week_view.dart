@@ -18,12 +18,18 @@ import '../extensions.dart';
 import '../modals.dart';
 import '../style/header_style.dart';
 import '../typedefs.dart';
-import '_internal_week_view_page.dart';
+import '_interactive_internal_week_view_page.dart';
 
 /// [Widget] to display week view.
 class InteractiveWeekView<T extends Object?> extends StatefulWidget {
   /// Builder to build tile for events.
   final EventTileBuilder<T>? eventTileBuilder;
+
+  /// Defines how event tile will be displayed.
+  final SelectedEventTileBuilder<T>? selectedEventTileBuilder;
+
+  /// Called when user modifies event.
+  final Function(CalendarEventData<T> event)? onEventChanged;
 
   /// Builder for timeline.
   final DateWidgetBuilder? timeLineBuilder;
@@ -188,6 +194,8 @@ class InteractiveWeekView<T extends Object?> extends StatefulWidget {
     Key? key,
     this.controller,
     this.eventTileBuilder,
+    this.selectedEventTileBuilder,
+    this.onEventChanged,
     this.pageTransitionDuration = const Duration(milliseconds: 300),
     this.pageTransitionCurve = Curves.ease,
     this.heightPerMinute = 1,
@@ -243,7 +251,8 @@ class InteractiveWeekView<T extends Object?> extends StatefulWidget {
   InteractiveWeekViewState<T> createState() => InteractiveWeekViewState<T>();
 }
 
-class InteractiveWeekViewState<T extends Object?> extends State<InteractiveWeekView<T>> {
+class InteractiveWeekViewState<T extends Object?>
+    extends State<InteractiveWeekView<T>> {
   late double _width;
   late double _height;
   late double _timeLineWidth;
@@ -265,6 +274,7 @@ class InteractiveWeekViewState<T extends Object?> extends State<InteractiveWeekV
 
   late DateWidgetBuilder _timeLineBuilder;
   late EventTileBuilder<T> _eventTileBuilder;
+  late SelectedEventTileBuilder<T> _selectedEventTileBuilder;
   late WeekPageHeaderBuilder _weekHeaderBuilder;
   late DateWidgetBuilder _weekDayBuilder;
   late WeekNumberBuilder _weekNumberBuilder;
@@ -402,7 +412,8 @@ class InteractiveWeekViewState<T extends Object?> extends State<InteractiveWeekV
 
                       return ValueListenableBuilder(
                         valueListenable: _scrollConfiguration,
-                        builder: (_, __, ___) => InternalWeekViewPage<T>(
+                        builder: (_, __, ___) =>
+                            InteractiveInternalWeekViewPage<T>(
                           key: ValueKey(
                               _hourHeight.toString() + dates[0].toString()),
                           height: _height,
@@ -418,6 +429,9 @@ class InteractiveWeekViewState<T extends Object?> extends State<InteractiveWeekV
                           onDateLongPress: widget.onDateLongPress,
                           onDateTap: widget.onDateTap,
                           eventTileBuilder: _eventTileBuilder,
+                          selectedEventTileBuilder: _selectedEventTileBuilder,
+                          onEventChanged: (event) =>
+                              widget.onEventChanged?.call(event),
                           heightPerMinute: widget.heightPerMinute,
                           hourIndicatorSettings: _hourIndicatorSettings,
                           dates: dates,
@@ -523,6 +537,8 @@ class InteractiveWeekViewState<T extends Object?> extends State<InteractiveWeekV
   void _assignBuilders() {
     _timeLineBuilder = widget.timeLineBuilder ?? _defaultTimeLineBuilder;
     _eventTileBuilder = widget.eventTileBuilder ?? _defaultEventTileBuilder;
+    _selectedEventTileBuilder =
+        widget.selectedEventTileBuilder ?? _defaultSelectedEventTileBuilder;
     _weekHeaderBuilder =
         widget.weekPageHeaderBuilder ?? _defaultWeekPageHeaderBuilder;
     _weekDayBuilder = widget.weekDayBuilder ?? _defaultWeekDayBuilder;
@@ -709,6 +725,42 @@ class InteractiveWeekViewState<T extends Object?> extends State<InteractiveWeekV
       );
     else
       return Container();
+  }
+
+  /// Default selectedEventTileBuilder builder. This builder will be used if
+  /// [widget.selectedEventTileBuilder] is null.
+  Widget _defaultSelectedEventTileBuilder(
+    DateTime date,
+    List<CalendarEventData<T>> events,
+    Rect boundary,
+    DateTime startDuration,
+    DateTime endDuration,
+    Function(double primaryDelta)? changeStartTime,
+    Function(double primaryDelta)? changeEndTime,
+    Function(double primaryDelta) reschedule,
+    VoidCallback onEditComplete,
+  ) {
+    if (events.isNotEmpty)
+      return SelectedRoundedEventTile(
+        borderRadius: BorderRadius.circular(10.0),
+        title: events[0].title,
+        totalEvents: events.length - 1,
+        description: events[0].description,
+        padding: EdgeInsets.all(10.0),
+        backgroundColor: events[0].color,
+        margin: EdgeInsets.all(2.0),
+        titleStyle: events[0].titleStyle,
+        descriptionStyle: events[0].descriptionStyle,
+        showHandles: false,
+        selectedOutlineColor: Theme.of(context).colorScheme.onSurface,
+        handleColor: Theme.of(context).colorScheme.onSurface,
+        changeEndTime: (primaryDelta) => changeEndTime?.call(primaryDelta),
+        changeStartTime: (primaryDelta) => changeStartTime?.call(primaryDelta),
+        reschedule: (value) => reschedule(value),
+        onEditComplete: () => onEditComplete(),
+      );
+    else
+      return SizedBox.shrink();
   }
 
   /// Default view header builder. This builder will be used if

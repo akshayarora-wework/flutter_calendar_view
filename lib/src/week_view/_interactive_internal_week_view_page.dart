@@ -4,14 +4,10 @@
 
 import 'package:flutter/material.dart';
 
+import '../../calendar_view.dart';
 import '../components/_internal_components.dart';
 import '../components/event_scroll_notifier.dart';
-import '../enumerations.dart';
-import '../event_arrangers/event_arrangers.dart';
-import '../event_controller.dart';
-import '../modals.dart';
 import '../painters.dart';
-import '../typedefs.dart';
 
 /// A single page for week view.
 class InteractiveInternalWeekViewPage<T extends Object?>
@@ -27,6 +23,12 @@ class InteractiveInternalWeekViewPage<T extends Object?>
 
   /// Builds tile for a single event.
   final EventTileBuilder<T> eventTileBuilder;
+
+  /// Defines how event tile will be displayed.
+  final SelectedEventTileBuilder<T> selectedEventTileBuilder;
+
+  /// Called when user modifies event.
+  final Function(CalendarEventData<T> event) onEventChanged;
 
   /// A calendar controller that controls all the events and rebuilds widget
   /// if event(s) are added or removed.
@@ -122,6 +124,8 @@ class InteractiveInternalWeekViewPage<T extends Object?>
     required this.width,
     required this.dates,
     required this.eventTileBuilder,
+    required this.selectedEventTileBuilder,
+    required this.onEventChanged,
     required this.controller,
     required this.timeLineBuilder,
     required this.hourIndicatorSettings,
@@ -257,17 +261,19 @@ class InteractiveInternalWeekViewPage<T extends Object?>
                                       date: dates[index],
                                       minuteSlotSize: minuteSlotSize,
                                     ),
-                                    EventGenerator<T>(
+                                    InteractiveEventLayout(
+                                      controller: controller,
                                       height: height,
-                                      date: filteredDates[index],
-                                      onTileTap: onTileTap,
                                       width: weekTitleWidth,
+                                      heightPerMinute: heightPerMinute,
                                       eventArranger: eventArranger,
                                       eventTileBuilder: eventTileBuilder,
+                                      selectedEventTileBuilder:
+                                          selectedEventTileBuilder,
+                                      onEventChanged: onEventChanged,
+                                      date: filteredDates[index],
+                                      onTileTap: onTileTap,
                                       scrollNotifier: scrollConfiguration,
-                                      events: controller
-                                          .getEventsOnDay(filteredDates[index]),
-                                      heightPerMinute: heightPerMinute,
                                     ),
                                   ],
                                 ),

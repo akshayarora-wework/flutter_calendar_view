@@ -10,7 +10,8 @@ class InteractiveWeekViewDemo extends StatefulWidget {
   const InteractiveWeekViewDemo({Key? key}) : super(key: key);
 
   @override
-  _InteractiveWeekViewDemoState createState() => _InteractiveWeekViewDemoState();
+  _InteractiveWeekViewDemoState createState() =>
+      _InteractiveWeekViewDemoState();
 }
 
 class _InteractiveWeekViewDemoState extends State<InteractiveWeekViewDemo> {

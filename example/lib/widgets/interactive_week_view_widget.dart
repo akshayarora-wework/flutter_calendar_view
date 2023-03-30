@@ -7,7 +7,8 @@ class InteractiveWeekViewWidget extends StatelessWidget {
   final GlobalKey<WeekViewState>? state;
   final double? width;
 
-  const InteractiveWeekViewWidget({Key? key, this.state, this.width}) : super(key: key);
+  const InteractiveWeekViewWidget({Key? key, this.state, this.width})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
