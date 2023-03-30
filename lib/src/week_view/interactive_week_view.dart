@@ -859,7 +859,8 @@ class InteractiveWeekViewState<T extends Object?>
   /// Animate to page which gives day calendar for [week].
   ///
   /// Arguments [duration] and [curve] will override default values provided
-  /// as [InteractiveWeekView.pageTransitionDuration] and [InteractiveWeekView.pageTransitionCurve]
+  /// as [InteractiveWeekView.pageTransitionDuration]
+  /// and [InteractiveWeekView.pageTransitionCurve]
   /// respectively.
   Future<void> animateToWeek(DateTime week,
       {Duration? duration, Curve? curve}) async {
