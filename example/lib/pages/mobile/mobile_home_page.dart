@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../extension.dart';
 import '../day_view_page.dart';
 import '../interactive_day_view_page.dart';
+import '../interactive_week_view_page.dart';
 import '../month_view_page.dart';
 import '../week_view_page.dart';
 
@@ -42,6 +43,13 @@ class MobileHomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => context.pushRoute(WeekViewDemo()),
               child: Text("Week View"),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () => context.pushRoute(InteractiveWeekViewDemo()),
+              child: Text("Interactive Week View"),
             ),
           ],
         ),

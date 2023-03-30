@@ -6,6 +6,7 @@ import '../app_colors.dart';
 import '../enumerations.dart';
 import 'day_view_widget.dart';
 import 'interactive_day_view_widget.dart';
+import 'interactive_week_view_widget.dart';
 import 'month_view_widget.dart';
 import 'week_view_widget.dart';
 
@@ -27,22 +28,33 @@ class CalendarViews extends StatelessWidget {
       width: double.infinity,
       color: AppColors.grey,
       child: Center(
-        child: view == CalendarView.month
-            ? MonthViewWidget(
-                width: width,
-              )
-            : view == CalendarView.day
-                ? DayViewWidget(
-                    width: width,
-                  )
-                : view == CalendarView.week
-                    ? WeekViewWidget(
-                        width: width,
-                      )
-                    : InteractiveDayViewWidget(
-                        width: width,
-                      ),
+        child: _getView(view, width),
       ),
     );
+  }
+
+  Widget _getView(CalendarView view, double width) {
+    switch (view) {
+      case CalendarView.day:
+        return DayViewWidget(
+          width: width,
+        );
+      case CalendarView.week:
+        return WeekViewWidget(
+          width: width,
+        );
+      case CalendarView.month:
+        return MonthViewWidget(
+          width: width,
+        );
+      case CalendarView.interactiveDay:
+        return InteractiveDayViewWidget(
+          width: width,
+        );
+      case CalendarView.interactiveWeek:
+        return InteractiveWeekViewWidget(
+          width: width,
+        );
+    }
   }
 }

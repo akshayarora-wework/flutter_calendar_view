@@ -3,4 +3,5 @@ enum CalendarView {
   day,
   week,
   interactiveDay,
+  interactiveWeek,
 }
