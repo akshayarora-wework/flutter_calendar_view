@@ -21,7 +21,7 @@ class InteractiveDayViewWidget extends StatelessWidget {
       onEventChanged: (event) {
         /// This is where I update the event in the database.
       },
-      hourIndicatorPainter: _customHourLinePainter,
+      customHourLinePainter: _customHourLinePainter,
     );
   }
 

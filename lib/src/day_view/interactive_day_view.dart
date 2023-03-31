@@ -88,7 +88,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   /// Custom painter for hour indicator.
   ///
   /// Use this if you want to paint custom hour indicator.
-  final HourIndicatorPainter? hourIndicatorPainter;
+  final CustomHourLinePainter? customHourLinePainter;
 
   /// Defines settings for live time indicator.
   ///
@@ -207,7 +207,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
     this.maxDay,
     this.initialDay,
     this.hourIndicatorSettings,
-    this.hourIndicatorPainter,
+    this.customHourLinePainter,
     this.heightPerMinute = 0.7,
     this.timeLineBuilder,
     this.timeLineWidth,
@@ -264,7 +264,7 @@ class InteractiveDayViewState<T extends Object?>
   late EventArranger<T> _eventArranger;
 
   late HourIndicatorSettings _hourIndicatorSettings;
-  late HourIndicatorPainter _hourIndicatorPainter;
+  late CustomHourLinePainter _hourIndicatorPainter;
   late HourIndicatorSettings _liveTimeIndicatorSettings;
 
   late PageController _pageController;
@@ -415,7 +415,7 @@ class InteractiveDayViewState<T extends Object?>
                           onEventChanged: _onEventChanged,
                           heightPerMinute: widget.heightPerMinute,
                           hourIndicatorSettings: _hourIndicatorSettings,
-                          hourIndicatorPainter: _hourIndicatorPainter,
+                          customHourLinePainter: _hourIndicatorPainter,
                           date: date,
                           onTileTap: widget.onEventTap,
                           onDateLongPress: widget.onDateLongPress,
@@ -510,7 +510,7 @@ class InteractiveDayViewState<T extends Object?>
         widget.dayDetectorBuilder ?? _defaultPressDetectorBuilder;
 
     _hourIndicatorPainter =
-        widget.hourIndicatorPainter ?? _defaultHourIndicatorPainter;
+        widget.customHourLinePainter ?? _defaultHourIndicatorPainter;
   }
 
   /// Sets the current date of this month.

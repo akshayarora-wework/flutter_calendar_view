@@ -48,7 +48,7 @@ class InteractiveInternalDayViewPage<T extends Object?>
   final HourIndicatorSettings hourIndicatorSettings;
 
   /// Custom painter for hour indicator.
-  final HourIndicatorPainter hourIndicatorPainter;
+  final CustomHourLinePainter customHourLinePainter;
 
   /// Flag to display live time indicator.
   /// If true then indicator will be displayed else not.
@@ -117,7 +117,7 @@ class InteractiveInternalDayViewPage<T extends Object?>
     required this.controller,
     required this.timeLineBuilder,
     required this.hourIndicatorSettings,
-    required this.hourIndicatorPainter,
+    required this.customHourLinePainter,
     required this.showLiveLine,
     required this.liveTimeIndicatorSettings,
     required this.heightPerMinute,
@@ -155,7 +155,7 @@ class InteractiveInternalDayViewPage<T extends Object?>
                   children: [
                     CustomPaint(
                       size: Size(width, height),
-                      painter: hourIndicatorPainter(
+                      painter: customHourLinePainter(
                         hourIndicatorSettings: hourIndicatorSettings,
                         minuteHeight: heightPerMinute,
                         showVerticalLine: showVerticalLine,
