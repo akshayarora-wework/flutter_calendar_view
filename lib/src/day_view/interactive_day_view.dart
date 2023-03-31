@@ -17,6 +17,7 @@ import '../event_arrangers/event_arrangers.dart';
 import '../event_controller.dart';
 import '../extensions.dart';
 import '../modals.dart';
+import '../painters.dart';
 import '../style/header_style.dart';
 import '../typedefs.dart';
 import '_interactive_internal_day_view_page.dart';
@@ -83,6 +84,11 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   ///
   /// Pass [HourIndicatorSettings.none] to remove Hour lines.
   final HourIndicatorSettings? hourIndicatorSettings;
+
+  /// Custom painter for hour indicator.
+  ///
+  /// Use this if you want to paint custom hour indicator.
+  final HourIndicatorPainter? hourIndicatorPainter;
 
   /// Defines settings for live time indicator.
   ///
@@ -201,6 +207,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
     this.maxDay,
     this.initialDay,
     this.hourIndicatorSettings,
+    this.hourIndicatorPainter,
     this.heightPerMinute = 0.7,
     this.timeLineBuilder,
     this.timeLineWidth,
@@ -257,6 +264,7 @@ class InteractiveDayViewState<T extends Object?>
   late EventArranger<T> _eventArranger;
 
   late HourIndicatorSettings _hourIndicatorSettings;
+  late HourIndicatorPainter _hourIndicatorPainter;
   late HourIndicatorSettings _liveTimeIndicatorSettings;
 
   late PageController _pageController;
@@ -407,6 +415,7 @@ class InteractiveDayViewState<T extends Object?>
                           onEventChanged: _onEventChanged,
                           heightPerMinute: widget.heightPerMinute,
                           hourIndicatorSettings: _hourIndicatorSettings,
+                          hourIndicatorPainter: _hourIndicatorPainter,
                           date: date,
                           onTileTap: widget.onEventTap,
                           onDateLongPress: widget.onDateLongPress,
@@ -499,6 +508,9 @@ class InteractiveDayViewState<T extends Object?>
         widget.fullDayEventBuilder ?? _defaultFullDayEventBuilder;
     _dayDetectorBuilder =
         widget.dayDetectorBuilder ?? _defaultPressDetectorBuilder;
+
+    _hourIndicatorPainter =
+        widget.hourIndicatorPainter ?? _defaultHourIndicatorPainter;
   }
 
   /// Sets the current date of this month.
@@ -674,6 +686,21 @@ class InteractiveDayViewState<T extends Object?>
   Widget _defaultFullDayEventBuilder(
           List<CalendarEventData<T>> events, DateTime date) =>
       FullDayEventView(events: events, date: date);
+
+  HourLinePainter _defaultHourIndicatorPainter({
+    required HourIndicatorSettings hourIndicatorSettings,
+    required double minuteHeight,
+    required bool showVerticalLine,
+    required double verticalLineOffset,
+  }) {
+    return HourLinePainter(
+      lineColor: hourIndicatorSettings.color,
+      lineHeight: hourIndicatorSettings.height,
+      minuteHeight: widget.heightPerMinute,
+      offset: _timeLineWidth + hourIndicatorSettings.offset,
+      showVerticalLine: widget.showVerticalLine,
+    );
+  }
 
   /// Called when user change page using any gesture or inbuilt functions.
   void _onPageChange(int index) {
