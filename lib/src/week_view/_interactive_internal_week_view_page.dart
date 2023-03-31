@@ -40,8 +40,14 @@ class InteractiveInternalWeekViewPage<T extends Object?>
   /// Settings for hour indicator lines.
   final HourIndicatorSettings hourIndicatorSettings;
 
+  /// Custom painter for hour indicator.
+  final CustomHourLinePainter customHourLinePainter;
+
   /// Flag to display live line.
   final bool showLiveLine;
+
+  /// Flag to display day seperator lines.
+  final bool showDaySeperatorLines;
 
   /// Settings for live time indicator.
   final HourIndicatorSettings liveTimeIndicatorSettings;
@@ -129,6 +135,7 @@ class InteractiveInternalWeekViewPage<T extends Object?>
     required this.controller,
     required this.timeLineBuilder,
     required this.hourIndicatorSettings,
+    required this.customHourLinePainter,
     required this.showLiveLine,
     required this.liveTimeIndicatorSettings,
     required this.heightPerMinute,
@@ -146,6 +153,7 @@ class InteractiveInternalWeekViewPage<T extends Object?>
     required this.weekDays,
     required this.minuteSlotSize,
     required this.scrollConfiguration,
+    required this.showDaySeperatorLines,
     this.fullDayEventBuilder,
     required this.weekDetectorBuilder,
   }) : super(key: key);
@@ -215,13 +223,11 @@ class InteractiveInternalWeekViewPage<T extends Object?>
                   children: [
                     CustomPaint(
                       size: Size(width, height),
-                      painter: HourLinePainter(
-                        lineColor: hourIndicatorSettings.color,
-                        lineHeight: hourIndicatorSettings.height,
-                        offset: timeLineWidth + hourIndicatorSettings.offset,
+                      painter: customHourLinePainter(
+                        hourIndicatorSettings: hourIndicatorSettings,
                         minuteHeight: heightPerMinute,
-                        verticalLineOffset: verticalLineOffset,
                         showVerticalLine: showVerticalLine,
+                        verticalLineOffset: verticalLineOffset,
                       ),
                     ),
                     if (showLiveLine && liveTimeIndicatorSettings.height > 0)
@@ -242,14 +248,16 @@ class InteractiveInternalWeekViewPage<T extends Object?>
                             ...List.generate(
                               filteredDates.length,
                               (index) => Container(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    right: BorderSide(
-                                      color: hourIndicatorSettings.color,
-                                      width: hourIndicatorSettings.height,
-                                    ),
-                                  ),
-                                ),
+                                decoration: showDaySeperatorLines
+                                    ? BoxDecoration(
+                                        border: Border(
+                                          right: BorderSide(
+                                            color: hourIndicatorSettings.color,
+                                            width: hourIndicatorSettings.height,
+                                          ),
+                                        ),
+                                      )
+                                    : null,
                                 height: height,
                                 width: weekTitleWidth,
                                 child: Stack(

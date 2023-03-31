@@ -88,7 +88,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   /// Custom painter for hour indicator.
   ///
   /// Use this if you want to paint custom hour indicator.
-  final CustomHourLinePainter? customHourLinePainter;
+  final CustomHourLinePainter? hourLinePainter;
 
   /// Defines settings for live time indicator.
   ///
@@ -207,7 +207,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
     this.maxDay,
     this.initialDay,
     this.hourIndicatorSettings,
-    this.customHourLinePainter,
+    this.hourLinePainter,
     this.heightPerMinute = 0.7,
     this.timeLineBuilder,
     this.timeLineWidth,
@@ -264,7 +264,7 @@ class InteractiveDayViewState<T extends Object?>
   late EventArranger<T> _eventArranger;
 
   late HourIndicatorSettings _hourIndicatorSettings;
-  late CustomHourLinePainter _hourIndicatorPainter;
+  late CustomHourLinePainter _hourLinePainter;
   late HourIndicatorSettings _liveTimeIndicatorSettings;
 
   late PageController _pageController;
@@ -415,7 +415,7 @@ class InteractiveDayViewState<T extends Object?>
                           onEventChanged: _onEventChanged,
                           heightPerMinute: widget.heightPerMinute,
                           hourIndicatorSettings: _hourIndicatorSettings,
-                          customHourLinePainter: _hourIndicatorPainter,
+                          customHourLinePainter: _hourLinePainter,
                           date: date,
                           onTileTap: widget.onEventTap,
                           onDateLongPress: widget.onDateLongPress,
@@ -509,8 +509,7 @@ class InteractiveDayViewState<T extends Object?>
     _dayDetectorBuilder =
         widget.dayDetectorBuilder ?? _defaultPressDetectorBuilder;
 
-    _hourIndicatorPainter =
-        widget.customHourLinePainter ?? _defaultHourIndicatorPainter;
+    _hourLinePainter = widget.hourLinePainter ?? _defaultHourLinePainter;
   }
 
   /// Sets the current date of this month.
@@ -687,7 +686,7 @@ class InteractiveDayViewState<T extends Object?>
           List<CalendarEventData<T>> events, DateTime date) =>
       FullDayEventView(events: events, date: date);
 
-  HourLinePainter _defaultHourIndicatorPainter({
+  HourLinePainter _defaultHourLinePainter({
     required HourIndicatorSettings hourIndicatorSettings,
     required double minuteHeight,
     required bool showVerticalLine,

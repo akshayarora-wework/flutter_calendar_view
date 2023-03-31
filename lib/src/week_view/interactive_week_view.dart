@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license
 // that can be found in the LICENSE file.
 
+import 'package:calendar_view/src/painters.dart';
 import 'package:flutter/material.dart';
 
 import '../calendar_constants.dart';
@@ -91,6 +92,11 @@ class InteractiveWeekView<T extends Object?> extends StatefulWidget {
   /// Settings for hour indicator settings.
   final HourIndicatorSettings? hourIndicatorSettings;
 
+  /// Custom painter for hour line.
+  ///
+  /// Use this if you want to paint custom hour lines.
+  final CustomHourLinePainter? hourLinePainter;
+
   /// Settings for live time indicator settings.
   final HourIndicatorSettings? liveTimeIndicatorSettings;
 
@@ -113,6 +119,9 @@ class InteractiveWeekView<T extends Object?> extends StatefulWidget {
 
   /// Flag to show live time indicator in all day or only [initialDay]
   final bool showLiveTimeLineInAllDays;
+
+  /// Flag to display day seperator lines.
+  final bool showDaySeperatorLines;
 
   /// Offset of time line
   final double timeLineOffset;
@@ -201,11 +210,13 @@ class InteractiveWeekView<T extends Object?> extends StatefulWidget {
     this.heightPerMinute = 1,
     this.timeLineOffset = 0,
     this.showLiveTimeLineInAllDays = false,
+    this.showDaySeperatorLines = true,
     this.width,
     this.minDay,
     this.maxDay,
     this.initialDay,
     this.hourIndicatorSettings,
+    this.hourLinePainter,
     this.timeLineBuilder,
     this.timeLineWidth,
     this.liveTimeIndicatorSettings,
@@ -268,6 +279,7 @@ class InteractiveWeekViewState<T extends Object?>
   late EventArranger<T> _eventArranger;
 
   late HourIndicatorSettings _hourIndicatorSettings;
+  late CustomHourLinePainter _hourLinePainter;
   late HourIndicatorSettings _liveTimeIndicatorSettings;
 
   late PageController _pageController;
@@ -434,9 +446,11 @@ class InteractiveWeekViewState<T extends Object?>
                               widget.onEventChanged?.call(event),
                           heightPerMinute: widget.heightPerMinute,
                           hourIndicatorSettings: _hourIndicatorSettings,
+                          customHourLinePainter: _hourLinePainter,
                           dates: dates,
                           showLiveLine: widget.showLiveTimeLineInAllDays ||
                               _showLiveTimeIndicator(dates),
+                          showDaySeperatorLines: widget.showDaySeperatorLines,
                           timeLineOffset: widget.timeLineOffset,
                           timeLineWidth: _timeLineWidth,
                           verticalLineOffset: 0,
@@ -547,6 +561,8 @@ class InteractiveWeekViewState<T extends Object?>
     _weekNumberBuilder = widget.weekNumberBuilder ?? _defaultWeekNumberBuilder;
     _fullDayEventBuilder =
         widget.fullDayEventBuilder ?? _defaultFullDayEventBuilder;
+
+    _hourLinePainter = widget.hourLinePainter ?? _defaultHourLinePainter;
   }
 
   Widget _defaultFullDayEventBuilder(
@@ -784,6 +800,21 @@ class InteractiveWeekViewState<T extends Object?>
       },
       headerStringBuilder: widget.headerStringBuilder,
       headerStyle: widget.headerStyle,
+    );
+  }
+
+  HourLinePainter _defaultHourLinePainter({
+    required HourIndicatorSettings hourIndicatorSettings,
+    required double minuteHeight,
+    required bool showVerticalLine,
+    required double verticalLineOffset,
+  }) {
+    return HourLinePainter(
+      lineColor: hourIndicatorSettings.color,
+      lineHeight: hourIndicatorSettings.height,
+      minuteHeight: widget.heightPerMinute,
+      offset: _timeLineWidth + hourIndicatorSettings.offset,
+      showVerticalLine: true,
     );
   }
 

@@ -85,6 +85,8 @@ class WeekView<T extends Object?> extends StatefulWidget {
   /// Settings for hour indicator settings.
   final HourIndicatorSettings? hourIndicatorSettings;
 
+
+
   /// Settings for live time indicator settings.
   final HourIndicatorSettings? liveTimeIndicatorSettings;
 
@@ -259,6 +261,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
   late EventArranger<T> _eventArranger;
 
   late HourIndicatorSettings _hourIndicatorSettings;
+
+
   late HourIndicatorSettings _liveTimeIndicatorSettings;
 
   late PageController _pageController;
@@ -531,6 +535,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
     _weekNumberBuilder = widget.weekNumberBuilder ?? _defaultWeekNumberBuilder;
     _fullDayEventBuilder =
         widget.fullDayEventBuilder ?? _defaultFullDayEventBuilder;
+
+  
   }
 
   Widget _defaultFullDayEventBuilder(
@@ -734,6 +740,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
       headerStyle: widget.headerStyle,
     );
   }
+
+
 
   /// Called when user change page using any gesture or inbuilt functions.
   void _onPageChange(int index) {
