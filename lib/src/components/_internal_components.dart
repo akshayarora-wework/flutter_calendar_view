@@ -466,6 +466,11 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
 
   final EventScrollConfiguration scrollNotifier;
 
+  final bool? isEventSelected;
+
+  final VoidCallback? onSelected;
+  final VoidCallback? onDeselected;
+
   /// A widget that display event tiles in day/week view.
   const InteractiveEventLayout({
     Key? key,
@@ -480,6 +485,9 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
     required this.date,
     required this.onTileTap,
     required this.scrollNotifier,
+    this.isEventSelected,
+    this.onSelected,
+    this.onDeselected,
   }) : super(key: key);
 
   @override
@@ -501,15 +509,21 @@ class _InteractiveEventLayoutState<T extends Object?>
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
     widget.onTileTap?.call(events, date);
     if (calendarEventData.value == null) {
+      if (widget.isEventSelected != null && widget.isEventSelected!) {
+        return;
+      }
       selectedCalendarEventData = events.first;
       calendarEventData.value = selectedCalendarEventData;
+      widget.onSelected?.call();
     } else {
       if (calendarEventData.value! == events.first) {
         selectedCalendarEventData = null;
         calendarEventData.value = selectedCalendarEventData;
+        widget.onDeselected?.call();
       } else {
         selectedCalendarEventData = events.first;
         calendarEventData.value = selectedCalendarEventData;
+        widget.onSelected?.call();
       }
     }
   }
@@ -584,6 +598,113 @@ class _InteractiveEventLayoutState<T extends Object?>
           }
         },
       ),
+    );
+  }
+}
+
+/// TODO: think of a better name .??
+class WeekDayLayout<T extends Object?> extends StatefulWidget {
+  const WeekDayLayout({
+    Key? key,
+    required this.filteredDates,
+    required this.showDaySeperatorLines,
+    required this.hourIndicatorSettings,
+    required this.height,
+    required this.dates,
+    required this.heightPerMinute,
+    required this.minuteSlotSize,
+    required this.weekDetectorBuilder,
+    required this.weekTitleWidth,
+    required this.controller,
+    required this.eventArranger,
+    required this.eventTileBuilder,
+    required this.selectedEventTileBuilder,
+    required this.onEventChanged,
+    required this.onTileTap,
+    required this.scrollConfiguration,
+  }) : super(key: key);
+
+  final List<DateTime> filteredDates;
+  final bool showDaySeperatorLines;
+  final HourIndicatorSettings hourIndicatorSettings;
+  final double height;
+  final double weekTitleWidth;
+  final double heightPerMinute;
+  final List<DateTime> dates;
+  final MinuteSlotSize minuteSlotSize;
+  final EventController<T> controller;
+  final EventArranger<T> eventArranger;
+  final DetectorBuilder weekDetectorBuilder;
+  final EventTileBuilder<T> eventTileBuilder;
+  final SelectedEventTileBuilder<T> selectedEventTileBuilder;
+  final Function(CalendarEventData<T> event) onEventChanged;
+  final CellTapCallback<T>? onTileTap;
+  final EventScrollConfiguration scrollConfiguration;
+
+  @override
+  State<WeekDayLayout<T>> createState() => _WeekDayLayoutState<T>();
+}
+
+class _WeekDayLayoutState<T extends Object?> extends State<WeekDayLayout<T>> {
+  bool isEventSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ...List.generate(
+          widget.filteredDates.length,
+          (index) => Container(
+            decoration: widget.showDaySeperatorLines
+                ? BoxDecoration(
+                    border: Border(
+                      right: BorderSide(
+                        color: widget.hourIndicatorSettings.color,
+                        width: widget.hourIndicatorSettings.height,
+                      ),
+                    ),
+                  )
+                : null,
+            height: widget.height,
+            width: widget.weekTitleWidth,
+            child: Stack(
+              children: [
+                widget.weekDetectorBuilder(
+                  width: widget.weekTitleWidth,
+                  height: widget.height,
+                  heightPerMinute: widget.heightPerMinute,
+                  date: widget.dates[index],
+                  minuteSlotSize: widget.minuteSlotSize,
+                ),
+                InteractiveEventLayout(
+                  controller: widget.controller,
+                  height: widget.height,
+                  width: widget.weekTitleWidth,
+                  heightPerMinute: widget.heightPerMinute,
+                  eventArranger: widget.eventArranger,
+                  eventTileBuilder: widget.eventTileBuilder,
+                  selectedEventTileBuilder: widget.selectedEventTileBuilder,
+                  onEventChanged: widget.onEventChanged,
+                  date: widget.filteredDates[index],
+                  onTileTap: widget.onTileTap,
+                  scrollNotifier: widget.scrollConfiguration,
+                  isEventSelected: isEventSelected,
+                  onSelected: () {
+                    setState(() {
+                      isEventSelected = true;
+                    });
+                  },
+                  onDeselected: () {
+                    setState(() {
+                      isEventSelected = false;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 }
