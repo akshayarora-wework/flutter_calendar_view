@@ -500,7 +500,6 @@ class _InteractiveEventLayoutState<T extends Object?>
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
     widget.onTileTap?.call(events, date);
-
     if (widget.controller.selectedEvent == null) {
       if (calendarEventData.value == null) {
         _selectEvent(events.first);
@@ -514,6 +513,11 @@ class _InteractiveEventLayoutState<T extends Object?>
     } else {
       _deselectEvent();
     }
+  }
+
+  /// Called when user taps outside of any event tiles.
+  void onTapOutSide() {
+    _deselectEvent();
   }
 
   void _selectEvent(CalendarEventData<T> event) {
@@ -547,9 +551,6 @@ class _InteractiveEventLayoutState<T extends Object?>
           if (value == null) {
             return Stack(
               children: [
-                GestureDetector(
-                  onTap: _deselectEvent,
-                ),
                 EventGenerator<T>(
                   height: widget.height,
                   date: widget.date,
@@ -567,7 +568,7 @@ class _InteractiveEventLayoutState<T extends Object?>
             return Stack(
               children: [
                 GestureDetector(
-                  onTap: _deselectEvent,
+                  onTap: onTapOutSide,
                 ),
                 EventGenerator<T>(
                   height: widget.height,
