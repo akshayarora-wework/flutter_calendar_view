@@ -105,6 +105,8 @@ class InteractiveInternalDayViewPage<T extends Object?>
 
   final ScrollController scrollController;
 
+  final TestDef testDef;
+
   /// Defines a single day page.
   const InteractiveInternalDayViewPage({
     Key? key,
@@ -135,6 +137,7 @@ class InteractiveInternalDayViewPage<T extends Object?>
     required this.fullDayEventBuilder,
     required this.scrollController,
     required this.dayDetectorBuilder,
+    required this.testDef,
   }) : super(key: key);
 
   @override
@@ -182,6 +185,7 @@ class InteractiveInternalDayViewPage<T extends Object?>
                         selectedEventTileBuilder: selectedEventTileBuilder,
                         onEventChanged: onEventChanged,
                         scrollNotifier: scrollNotifier,
+                        testDef: testDef,
                         width: width -
                             timeLineWidth -
                             hourIndicatorSettings.offset -

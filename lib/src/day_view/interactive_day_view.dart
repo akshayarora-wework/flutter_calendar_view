@@ -190,6 +190,8 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   /// Display full day event builder.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
+  final TestDef? testDef;
+
   /// Main widget for day view.
   const InteractiveDayView({
     Key? key,
@@ -230,6 +232,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
     this.scrollPhysics,
     this.pageViewPhysics,
     this.dayDetectorBuilder,
+    this.testDef,
   })  : assert(timeLineOffset >= 0,
             "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0,
@@ -292,6 +295,8 @@ class InteractiveDayViewState<T extends Object?>
   late VoidCallback _reloadCallback;
 
   final _scrollConfiguration = EventScrollConfiguration<T>();
+
+  late TestDef _testDef;
 
   @override
   void initState() {
@@ -434,6 +439,7 @@ class InteractiveDayViewState<T extends Object?>
                           scrollNotifier: _scrollConfiguration,
                           fullDayEventBuilder: _fullDayEventBuilder,
                           scrollController: _scrollController,
+                          testDef: _testDef,
                         ),
                       );
                     },
@@ -510,6 +516,14 @@ class InteractiveDayViewState<T extends Object?>
         widget.dayDetectorBuilder ?? _defaultPressDetectorBuilder;
 
     _hourLinePainter = widget.hourLinePainter ?? _defaultHourLinePainter;
+
+    _testDef = widget.testDef ?? _defaultTestDef;
+  }
+
+  CalendarEventData _defaultTestDef({
+    required CalendarEventData<Object?> event,
+  }) {
+    return event;
   }
 
   /// Sets the current date of this month.

@@ -91,3 +91,7 @@ typedef CustomHourLinePainter = CustomPainter Function({
   required bool showVerticalLine,
   required double verticalLineOffset,
 });
+
+typedef TestDef<T extends Object?> = CalendarEventData<T> Function({
+  required CalendarEventData<T> event,
+});
