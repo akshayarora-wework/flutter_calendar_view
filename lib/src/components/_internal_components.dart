@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -510,6 +511,7 @@ class _InteractiveEventLayoutState<T extends Object?>
     widget.onTileTap?.call(events, date);
     if (calendarEventData.value == null) {
       if (widget.isEventSelected != null && widget.isEventSelected!) {
+        widget.onDeselected?.call();
         return;
       }
       selectedCalendarEventData = events.first;
@@ -532,6 +534,18 @@ class _InteractiveEventLayoutState<T extends Object?>
   void onTapOutSide() {
     selectedCalendarEventData = null;
     calendarEventData.value = selectedCalendarEventData;
+    widget.onDeselected?.call();
+  }
+
+  @override
+  void didUpdateWidget(covariant InteractiveEventLayout<T> oldWidget) {
+    if (oldWidget.isEventSelected != widget.isEventSelected &&
+        widget.isEventSelected! == false) {
+      selectedCalendarEventData = null;
+      calendarEventData.value = selectedCalendarEventData;
+    }
+
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

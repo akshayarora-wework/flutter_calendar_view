@@ -260,12 +260,10 @@ class InteractiveInternalWeekViewPage<T extends Object?>
                           onEventChanged: onEventChanged,
                           onTileTap: onTileTap,
                           scrollConfiguration: scrollConfiguration,
-                          
                         ),
 
                         // Row(
                         //   children: [
-
                         //     ...List.generate(
                         //       filteredDates.length,
                         //       (index) => Container(
