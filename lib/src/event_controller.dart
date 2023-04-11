@@ -30,6 +30,9 @@ class EventController<T extends Object?> extends ChangeNotifier {
   // Store all calendar event data
   final CalendarData<T> _calendarData = CalendarData();
 
+  // Store selected event.
+  CalendarEventData<T>? _selectedEvent;
+
   //#endregion
 
   //#region Public Fields
@@ -54,9 +57,24 @@ class EventController<T extends Object?> extends ChangeNotifier {
   ///
   EventFilter<T>? get eventFilter => _eventFilter;
 
+  CalendarEventData<T>? get selectedEvent => _selectedEvent;
+
   //#endregion
 
   //#region Public Methods
+
+  /// Selects the given [event].
+  void selectEvent(CalendarEventData<T> event) {
+    _selectedEvent = event;
+    notifyListeners();
+  }
+
+  /// Deselects the selected event.
+  void deselectEvent() {
+    _selectedEvent = null;
+    notifyListeners();
+  }
+
   /// Add all the events in the list
   /// If there is an event with same date then
   void addAll(List<CalendarEventData<T>> events) {

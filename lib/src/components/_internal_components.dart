@@ -467,11 +467,6 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
 
   final EventScrollConfiguration scrollNotifier;
 
-  final bool? isEventSelected;
-
-  final VoidCallback? onSelected;
-  final VoidCallback? onDeselected;
-
   /// A widget that display event tiles in day/week view.
   const InteractiveEventLayout({
     Key? key,
@@ -486,9 +481,6 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
     required this.date,
     required this.onTileTap,
     required this.scrollNotifier,
-    this.isEventSelected,
-    this.onSelected,
-    this.onDeselected,
   }) : super(key: key);
 
   @override
@@ -502,50 +494,46 @@ class _InteractiveEventLayoutState<T extends Object?>
   ValueNotifier<CalendarEventData<T>?> calendarEventData =
       ValueNotifier<CalendarEventData<T>?>(null);
 
-  /// The original selected event this is used to replace the
-  /// event in the [EventController] when the modification is done.
-  CalendarEventData<T>? selectedCalendarEventData;
+  /// The copy of the selected event.
+  CalendarEventData<T>? copyOfSelectedEvent;
 
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
     widget.onTileTap?.call(events, date);
     if (calendarEventData.value == null) {
-      if (widget.isEventSelected != null && widget.isEventSelected!) {
-        widget.onDeselected?.call();
-        return;
-      }
-      selectedCalendarEventData = events.first;
-      calendarEventData.value = selectedCalendarEventData;
-      widget.onSelected?.call();
+      _selectEvent(events.first);
     } else {
       if (calendarEventData.value! == events.first) {
-        selectedCalendarEventData = null;
-        calendarEventData.value = selectedCalendarEventData;
-        widget.onDeselected?.call();
+        _deselectEvent();
       } else {
-        selectedCalendarEventData = events.first;
-        calendarEventData.value = selectedCalendarEventData;
-        widget.onSelected?.call();
+        _selectEvent(events.first);
       }
     }
   }
 
   /// Called when user taps outside of any event tiles.
   void onTapOutSide() {
-    selectedCalendarEventData = null;
-    calendarEventData.value = selectedCalendarEventData;
-    widget.onDeselected?.call();
+    _deselectEvent();
+  }
+
+  void _selectEvent(CalendarEventData<T> event) {
+    widget.controller.selectEvent(event);
+    calendarEventData.value = widget.controller.selectedEvent;
+  }
+
+  void _deselectEvent() {
+    widget.controller.deselectEvent();
+    calendarEventData.value = widget.controller.selectedEvent;
   }
 
   @override
-  void didUpdateWidget(covariant InteractiveEventLayout<T> oldWidget) {
-    if (oldWidget.isEventSelected != widget.isEventSelected &&
-        widget.isEventSelected! == false) {
-      selectedCalendarEventData = null;
-      calendarEventData.value = selectedCalendarEventData;
-    }
-
-    super.didUpdateWidget(oldWidget);
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      if (widget.controller.selectedEvent != calendarEventData.value) {
+        calendarEventData.value = null;
+      }
+    });
   }
 
   @override
@@ -581,7 +569,7 @@ class _InteractiveEventLayoutState<T extends Object?>
                   eventArranger: widget.eventArranger,
                   events: widget.controller.getEventsOnDay(widget.date)
                     ..removeWhere(
-                      (element) => element == selectedCalendarEventData,
+                      (element) => element == widget.controller.selectedEvent,
                     ),
                   heightPerMinute: widget.heightPerMinute,
                   eventTileBuilder: widget.eventTileBuilder,
@@ -591,10 +579,10 @@ class _InteractiveEventLayoutState<T extends Object?>
                 SelectedEventGenerator<T>(
                   onEventChanged: (modifiedEvent) {
                     widget.controller.replace(
-                      eventDataToReplace: selectedCalendarEventData!,
+                      eventDataToReplace: widget.controller.selectedEvent!,
                       newEventData: modifiedEvent,
                     );
-                    selectedCalendarEventData = modifiedEvent;
+                    _selectEvent(modifiedEvent);
                     widget.onEventChanged(modifiedEvent);
                   },
                   height: widget.height,
@@ -616,112 +604,6 @@ class _InteractiveEventLayoutState<T extends Object?>
   }
 }
 
-/// TODO: think of a better name .??
-class WeekDayLayout<T extends Object?> extends StatefulWidget {
-  const WeekDayLayout({
-    Key? key,
-    required this.filteredDates,
-    required this.showDaySeperatorLines,
-    required this.hourIndicatorSettings,
-    required this.height,
-    required this.dates,
-    required this.heightPerMinute,
-    required this.minuteSlotSize,
-    required this.weekDetectorBuilder,
-    required this.weekTitleWidth,
-    required this.controller,
-    required this.eventArranger,
-    required this.eventTileBuilder,
-    required this.selectedEventTileBuilder,
-    required this.onEventChanged,
-    required this.onTileTap,
-    required this.scrollConfiguration,
-  }) : super(key: key);
-
-  final List<DateTime> filteredDates;
-  final bool showDaySeperatorLines;
-  final HourIndicatorSettings hourIndicatorSettings;
-  final double height;
-  final double weekTitleWidth;
-  final double heightPerMinute;
-  final List<DateTime> dates;
-  final MinuteSlotSize minuteSlotSize;
-  final EventController<T> controller;
-  final EventArranger<T> eventArranger;
-  final DetectorBuilder weekDetectorBuilder;
-  final EventTileBuilder<T> eventTileBuilder;
-  final SelectedEventTileBuilder<T> selectedEventTileBuilder;
-  final Function(CalendarEventData<T> event) onEventChanged;
-  final CellTapCallback<T>? onTileTap;
-  final EventScrollConfiguration scrollConfiguration;
-
-  @override
-  State<WeekDayLayout<T>> createState() => _WeekDayLayoutState<T>();
-}
-
-class _WeekDayLayoutState<T extends Object?> extends State<WeekDayLayout<T>> {
-  bool isEventSelected = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ...List.generate(
-          widget.filteredDates.length,
-          (index) => Container(
-            decoration: widget.showDaySeperatorLines
-                ? BoxDecoration(
-                    border: Border(
-                      right: BorderSide(
-                        color: widget.hourIndicatorSettings.color,
-                        width: widget.hourIndicatorSettings.height,
-                      ),
-                    ),
-                  )
-                : null,
-            height: widget.height,
-            width: widget.weekTitleWidth,
-            child: Stack(
-              children: [
-                widget.weekDetectorBuilder(
-                  width: widget.weekTitleWidth,
-                  height: widget.height,
-                  heightPerMinute: widget.heightPerMinute,
-                  date: widget.dates[index],
-                  minuteSlotSize: widget.minuteSlotSize,
-                ),
-                InteractiveEventLayout(
-                  controller: widget.controller,
-                  height: widget.height,
-                  width: widget.weekTitleWidth,
-                  heightPerMinute: widget.heightPerMinute,
-                  eventArranger: widget.eventArranger,
-                  eventTileBuilder: widget.eventTileBuilder,
-                  selectedEventTileBuilder: widget.selectedEventTileBuilder,
-                  onEventChanged: widget.onEventChanged,
-                  date: widget.filteredDates[index],
-                  onTileTap: widget.onTileTap,
-                  scrollNotifier: widget.scrollConfiguration,
-                  isEventSelected: isEventSelected,
-                  onSelected: () {
-                    setState(() {
-                      isEventSelected = true;
-                    });
-                  },
-                  onDeselected: () {
-                    setState(() {
-                      isEventSelected = false;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        )
-      ],
-    );
-  }
-}
 
 /// A widget that allow to long press on calendar.
 class PressDetector extends StatelessWidget {

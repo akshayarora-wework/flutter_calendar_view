@@ -243,71 +243,52 @@ class InteractiveInternalWeekViewPage<T extends Object?>
                       child: SizedBox(
                         width: weekTitleWidth * filteredDates.length,
                         height: height,
-                        child: WeekDayLayout(
-                          filteredDates: filteredDates,
-                          showDaySeperatorLines: showDaySeperatorLines,
-                          hourIndicatorSettings: hourIndicatorSettings,
-                          height: height,
-                          dates: dates,
-                          heightPerMinute: heightPerMinute,
-                          minuteSlotSize: minuteSlotSize,
-                          weekDetectorBuilder: weekDetectorBuilder,
-                          weekTitleWidth: weekTitleWidth,
-                          controller: controller,
-                          eventArranger: eventArranger,
-                          eventTileBuilder: eventTileBuilder,
-                          selectedEventTileBuilder: selectedEventTileBuilder,
-                          onEventChanged: onEventChanged,
-                          onTileTap: onTileTap,
-                          scrollConfiguration: scrollConfiguration,
+                        child: Row(
+                          children: [
+                            ...List.generate(
+                              filteredDates.length,
+                              (index) => Container(
+                                decoration: showDaySeperatorLines
+                                    ? BoxDecoration(
+                                        border: Border(
+                                          right: BorderSide(
+                                            color: hourIndicatorSettings.color,
+                                            width: hourIndicatorSettings.height,
+                                          ),
+                                        ),
+                                      )
+                                    : null,
+                                height: height,
+                                width: weekTitleWidth,
+                                child: Stack(
+                                  children: [
+                                    weekDetectorBuilder(
+                                      width: weekTitleWidth,
+                                      height: height,
+                                      heightPerMinute: heightPerMinute,
+                                      date: dates[index],
+                                      minuteSlotSize: minuteSlotSize,
+                                    ),
+                                    InteractiveEventLayout(
+                                      controller: controller,
+                                      height: height,
+                                      width: weekTitleWidth,
+                                      heightPerMinute: heightPerMinute,
+                                      eventArranger: eventArranger,
+                                      eventTileBuilder: eventTileBuilder,
+                                      selectedEventTileBuilder:
+                                          selectedEventTileBuilder,
+                                      onEventChanged: onEventChanged,
+                                      date: filteredDates[index],
+                                      onTileTap: onTileTap,
+                                      scrollNotifier: scrollConfiguration,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-
-                        // Row(
-                        //   children: [
-                        //     ...List.generate(
-                        //       filteredDates.length,
-                        //       (index) => Container(
-                        //         decoration: showDaySeperatorLines
-                        //             ? BoxDecoration(
-                        //                 border: Border(
-                        //                   right: BorderSide(
-                        //                     color: hourIndicatorSettings.color,
-                        //                     width: hourIndicatorSettings.height,
-                        //                   ),
-                        //                 ),
-                        //               )
-                        //             : null,
-                        //         height: height,
-                        //         width: weekTitleWidth,
-                        //         child: Stack(
-                        //           children: [
-                        //             weekDetectorBuilder(
-                        //               width: weekTitleWidth,
-                        //               height: height,
-                        //               heightPerMinute: heightPerMinute,
-                        //               date: dates[index],
-                        //               minuteSlotSize: minuteSlotSize,
-                        //             ),
-                        //             InteractiveEventLayout(
-                        //               controller: controller,
-                        //               height: height,
-                        //               width: weekTitleWidth,
-                        //               heightPerMinute: heightPerMinute,
-                        //               eventArranger: eventArranger,
-                        //               eventTileBuilder: eventTileBuilder,
-                        //               selectedEventTileBuilder:
-                        //                   selectedEventTileBuilder,
-                        //               onEventChanged: onEventChanged,
-                        //               date: filteredDates[index],
-                        //               onTileTap: onTileTap,
-                        //               scrollNotifier: scrollConfiguration,
-                        //             ),
-                        //           ],
-                        //         ),
-                        //       ),
-                        //     )
-                        //   ],
-                        // ),
                       ),
                     ),
                     TimeLine(
