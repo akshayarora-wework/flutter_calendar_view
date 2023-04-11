@@ -591,14 +591,16 @@ class _InteractiveEventLayoutState<T extends Object?>
                   onEventChanged: (modifiedEvent) {
                     // TODO: add custom event change logic.
 
+                    final changedEvent = widget.testDef(event: modifiedEvent)
+                        as CalendarEventData<T>;
+
                     widget.controller.replace(
                       eventDataToReplace: widget.controller.selectedEvent!,
-                      newEventData: widget.testDef(event: modifiedEvent)
-                          as CalendarEventData<T>,
+                      newEventData: changedEvent,
                     );
 
-                    _selectEvent(modifiedEvent);
-                    widget.onEventChanged(modifiedEvent);
+                    _selectEvent(changedEvent);
+                    widget.onEventChanged(changedEvent);
                   },
                   height: widget.height,
                   date: widget.date,

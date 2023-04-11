@@ -572,7 +572,7 @@ class InteractiveWeekViewState<T extends Object?>
 
     _testDef = widget.testDef ?? _defaultTestDef;
   }
-  
+
   CalendarEventData _defaultTestDef({
     required CalendarEventData<Object?> event,
   }) {
