@@ -500,20 +500,20 @@ class _InteractiveEventLayoutState<T extends Object?>
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
     widget.onTileTap?.call(events, date);
-    if (calendarEventData.value == null) {
-      _selectEvent(events.first);
-    } else {
-      if (calendarEventData.value! == events.first) {
-        _deselectEvent();
-      } else {
-        _selectEvent(events.first);
-      }
-    }
-  }
 
-  /// Called when user taps outside of any event tiles.
-  void onTapOutSide() {
-    _deselectEvent();
+    if (widget.controller.selectedEvent == null) {
+      if (calendarEventData.value == null) {
+        _selectEvent(events.first);
+      } else {
+        if (calendarEventData.value! == events.first) {
+          _deselectEvent();
+        } else {
+          _selectEvent(events.first);
+        }
+      }
+    } else {
+      _deselectEvent();
+    }
   }
 
   void _selectEvent(CalendarEventData<T> event) {
@@ -523,7 +523,7 @@ class _InteractiveEventLayoutState<T extends Object?>
 
   void _deselectEvent() {
     widget.controller.deselectEvent();
-    calendarEventData.value = widget.controller.selectedEvent;
+    calendarEventData.value = null;
   }
 
   @override
@@ -545,22 +545,29 @@ class _InteractiveEventLayoutState<T extends Object?>
         valueListenable: calendarEventData,
         builder: (context, value, child) {
           if (value == null) {
-            return EventGenerator<T>(
-              height: widget.height,
-              date: widget.date,
-              onTileTap: onTileTap,
-              eventArranger: widget.eventArranger,
-              events: widget.controller.getEventsOnDay(widget.date),
-              heightPerMinute: widget.heightPerMinute,
-              eventTileBuilder: widget.eventTileBuilder,
-              scrollNotifier: widget.scrollNotifier,
-              width: widget.width,
+            return Stack(
+              children: [
+                GestureDetector(
+                  onTap: _deselectEvent,
+                ),
+                EventGenerator<T>(
+                  height: widget.height,
+                  date: widget.date,
+                  onTileTap: onTileTap,
+                  eventArranger: widget.eventArranger,
+                  events: widget.controller.getEventsOnDay(widget.date),
+                  heightPerMinute: widget.heightPerMinute,
+                  eventTileBuilder: widget.eventTileBuilder,
+                  scrollNotifier: widget.scrollNotifier,
+                  width: widget.width,
+                ),
+              ],
             );
           } else {
             return Stack(
               children: [
                 GestureDetector(
-                  onTap: onTapOutSide,
+                  onTap: _deselectEvent,
                 ),
                 EventGenerator<T>(
                   height: widget.height,
@@ -603,7 +610,6 @@ class _InteractiveEventLayoutState<T extends Object?>
     );
   }
 }
-
 
 /// A widget that allow to long press on calendar.
 class PressDetector extends StatelessWidget {
