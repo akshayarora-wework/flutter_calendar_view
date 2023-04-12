@@ -198,7 +198,7 @@ class InteractiveWeekView<T extends Object?> extends StatefulWidget {
   /// Display full day event builder.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
-  final TestDef<T>? testDef;
+  final EventUpdate<T>? eventUpdate;
 
   /// Main widget for week view.
   const InteractiveWeekView({
@@ -245,7 +245,7 @@ class InteractiveWeekView<T extends Object?> extends StatefulWidget {
     this.headerStyle = const HeaderStyle(),
     this.safeAreaOption = const SafeAreaOption(),
     this.fullDayEventBuilder,
-    this.testDef,
+    this.eventUpdate,
   })  : assert((timeLineOffset) >= 0,
             "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0,
@@ -311,7 +311,7 @@ class InteractiveWeekViewState<T extends Object?>
 
   final _scrollConfiguration = EventScrollConfiguration();
 
-  late TestDef<T> _testDef;
+  late EventUpdate<T> _eventUpdate;
 
   @override
   void initState() {
@@ -468,7 +468,7 @@ class InteractiveWeekViewState<T extends Object?>
                           minuteSlotSize: widget.minuteSlotSize,
                           scrollConfiguration: _scrollConfiguration,
                           fullDayEventBuilder: _fullDayEventBuilder,
-                          testDef: _testDef,
+                          eventUpdate: _eventUpdate,
                         ),
                       );
                     },
@@ -570,10 +570,10 @@ class InteractiveWeekViewState<T extends Object?>
 
     _hourLinePainter = widget.hourLinePainter ?? _defaultHourLinePainter;
 
-    _testDef = widget.testDef ?? _defaultTestDef;
+    _eventUpdate = widget.eventUpdate ?? _defaultEventUpdate;
   }
 
-  CalendarEventData<T> _defaultTestDef(
+  CalendarEventData<T> _defaultEventUpdate(
     CalendarEventData<T> event,
   ) {
     return event;

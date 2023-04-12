@@ -467,7 +467,7 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
 
   final EventScrollConfiguration scrollNotifier;
 
-  final TestDef<T> testDef;
+  final EventUpdate<T> eventUpdate;
 
   /// A widget that display event tiles in day/week view.
   const InteractiveEventLayout({
@@ -483,7 +483,7 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
     required this.date,
     required this.onTileTap,
     required this.scrollNotifier,
-    required this.testDef,
+    required this.eventUpdate,
   }) : super(key: key);
 
   @override
@@ -591,7 +591,7 @@ class _InteractiveEventLayoutState<T extends Object?>
                   onEventChanged: (modifiedEvent) {
                     // TODO: add custom event change logic.
 
-                    final changedEvent = widget.testDef(modifiedEvent);
+                    final changedEvent = widget.eventUpdate(modifiedEvent);
 
                     widget.controller.replace(
                       eventDataToReplace: widget.controller.selectedEvent!,

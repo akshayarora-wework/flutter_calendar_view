@@ -190,7 +190,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   /// Display full day event builder.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
-  final TestDef<T>? testDef;
+  final EventUpdate<T>? eventUpdate;
 
   /// Main widget for day view.
   const InteractiveDayView({
@@ -232,7 +232,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
     this.scrollPhysics,
     this.pageViewPhysics,
     this.dayDetectorBuilder,
-    this.testDef,
+    this.eventUpdate,
   })  : assert(timeLineOffset >= 0,
             "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0,
@@ -296,7 +296,7 @@ class InteractiveDayViewState<T extends Object?>
 
   final _scrollConfiguration = EventScrollConfiguration<T>();
 
-  late TestDef<T> _testDef;
+  late EventUpdate<T> _eventUpdate;
 
   @override
   void initState() {
@@ -439,7 +439,7 @@ class InteractiveDayViewState<T extends Object?>
                           scrollNotifier: _scrollConfiguration,
                           fullDayEventBuilder: _fullDayEventBuilder,
                           scrollController: _scrollController,
-                          testDef: _testDef,
+                          eventUpdate: _eventUpdate,
                         ),
                       );
                     },
@@ -517,10 +517,10 @@ class InteractiveDayViewState<T extends Object?>
 
     _hourLinePainter = widget.hourLinePainter ?? _defaultHourLinePainter;
 
-    _testDef = widget.testDef ?? _defaultTestDef;
+    _eventUpdate = widget.eventUpdate ?? _defaultEventUpdate;
   }
 
-  CalendarEventData<T> _defaultTestDef(
+  CalendarEventData<T> _defaultEventUpdate(
     CalendarEventData<T> event,
   ) {
     return event;

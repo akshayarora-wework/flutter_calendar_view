@@ -120,7 +120,7 @@ class InteractiveInternalWeekViewPage<T extends Object?>
   /// Display full day events.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
-  final TestDef<T> testDef;
+  final EventUpdate<T> eventUpdate;
 
   /// A single page for week view.
   const InteractiveInternalWeekViewPage({
@@ -158,7 +158,7 @@ class InteractiveInternalWeekViewPage<T extends Object?>
     required this.showDaySeperatorLines,
     this.fullDayEventBuilder,
     required this.weekDetectorBuilder,
-    required this.testDef,
+    required this.eventUpdate,
   }) : super(key: key);
 
   @override
@@ -285,7 +285,7 @@ class InteractiveInternalWeekViewPage<T extends Object?>
                                       date: filteredDates[index],
                                       onTileTap: onTileTap,
                                       scrollNotifier: scrollConfiguration,
-                                      testDef: testDef,
+                                      eventUpdate: eventUpdate,
                                     ),
                                   ],
                                 ),
