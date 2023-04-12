@@ -198,7 +198,7 @@ class InteractiveWeekView<T extends Object?> extends StatefulWidget {
   /// Display full day event builder.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
-  final TestDef? testDef;
+  final TestDef<T>? testDef;
 
   /// Main widget for week view.
   const InteractiveWeekView({
@@ -311,7 +311,7 @@ class InteractiveWeekViewState<T extends Object?>
 
   final _scrollConfiguration = EventScrollConfiguration();
 
-  late TestDef _testDef;
+  late TestDef<T> _testDef;
 
   @override
   void initState() {
@@ -573,9 +573,9 @@ class InteractiveWeekViewState<T extends Object?>
     _testDef = widget.testDef ?? _defaultTestDef;
   }
 
-  CalendarEventData _defaultTestDef({
-    required CalendarEventData<Object?> event,
-  }) {
+  CalendarEventData<T> _defaultTestDef(
+    CalendarEventData<T> event,
+  ) {
     return event;
   }
 

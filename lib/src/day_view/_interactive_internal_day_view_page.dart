@@ -105,7 +105,7 @@ class InteractiveInternalDayViewPage<T extends Object?>
 
   final ScrollController scrollController;
 
-  final TestDef testDef;
+  final TestDef<T> testDef;
 
   /// Defines a single day page.
   const InteractiveInternalDayViewPage({

@@ -190,7 +190,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   /// Display full day event builder.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
-  final TestDef? testDef;
+  final TestDef<T>? testDef;
 
   /// Main widget for day view.
   const InteractiveDayView({
@@ -296,7 +296,7 @@ class InteractiveDayViewState<T extends Object?>
 
   final _scrollConfiguration = EventScrollConfiguration<T>();
 
-  late TestDef _testDef;
+  late TestDef<T> _testDef;
 
   @override
   void initState() {
@@ -520,9 +520,9 @@ class InteractiveDayViewState<T extends Object?>
     _testDef = widget.testDef ?? _defaultTestDef;
   }
 
-  CalendarEventData _defaultTestDef({
-    required CalendarEventData<Object?> event,
-  }) {
+  CalendarEventData<T> _defaultTestDef(
+    CalendarEventData<T> event,
+  ) {
     return event;
   }
 

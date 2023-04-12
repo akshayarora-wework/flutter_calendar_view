@@ -120,7 +120,7 @@ class InteractiveInternalWeekViewPage<T extends Object?>
   /// Display full day events.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
-  final TestDef testDef;
+  final TestDef<T> testDef;
 
   /// A single page for week view.
   const InteractiveInternalWeekViewPage({
