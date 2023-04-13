@@ -107,38 +107,41 @@ class InteractiveInternalDayViewPage<T extends Object?>
 
   final EventUpdate<T> eventUpdate;
 
+  final bool isInteractive;
+
   /// Defines a single day page.
-  const InteractiveInternalDayViewPage({
-    Key? key,
-    required this.showVerticalLine,
-    required this.width,
-    required this.date,
-    required this.eventTileBuilder,
-    required this.selectedEventTileBuilder,
-    required this.onEventChanged,
-    required this.controller,
-    required this.timeLineBuilder,
-    required this.hourIndicatorSettings,
-    required this.customHourLinePainter,
-    required this.showLiveLine,
-    required this.liveTimeIndicatorSettings,
-    required this.heightPerMinute,
-    required this.timeLineWidth,
-    required this.timeLineOffset,
-    required this.height,
-    required this.hourHeight,
-    required this.eventArranger,
-    required this.verticalLineOffset,
-    required this.onTileTap,
-    required this.onDateLongPress,
-    required this.onDateTap,
-    required this.minuteSlotSize,
-    required this.scrollNotifier,
-    required this.fullDayEventBuilder,
-    required this.scrollController,
-    required this.dayDetectorBuilder,
-    required this.eventUpdate,
-  }) : super(key: key);
+  const InteractiveInternalDayViewPage(
+      {Key? key,
+      required this.showVerticalLine,
+      required this.width,
+      required this.date,
+      required this.eventTileBuilder,
+      required this.selectedEventTileBuilder,
+      required this.onEventChanged,
+      required this.controller,
+      required this.timeLineBuilder,
+      required this.hourIndicatorSettings,
+      required this.customHourLinePainter,
+      required this.showLiveLine,
+      required this.liveTimeIndicatorSettings,
+      required this.heightPerMinute,
+      required this.timeLineWidth,
+      required this.timeLineOffset,
+      required this.height,
+      required this.hourHeight,
+      required this.eventArranger,
+      required this.verticalLineOffset,
+      required this.onTileTap,
+      required this.onDateLongPress,
+      required this.onDateTap,
+      required this.minuteSlotSize,
+      required this.scrollNotifier,
+      required this.fullDayEventBuilder,
+      required this.scrollController,
+      required this.dayDetectorBuilder,
+      required this.eventUpdate,
+      required this.isInteractive})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +177,7 @@ class InteractiveInternalDayViewPage<T extends Object?>
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: InteractiveEventLayout<T>(
+                      child: EventLayout<T>(
                         controller: controller,
                         height: height,
                         date: date,
@@ -186,6 +189,7 @@ class InteractiveInternalDayViewPage<T extends Object?>
                         onEventChanged: onEventChanged,
                         scrollNotifier: scrollNotifier,
                         eventUpdate: eventUpdate,
+                        isInteractive: isInteractive,
                         width: width -
                             timeLineWidth -
                             hourIndicatorSettings.offset -

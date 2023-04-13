@@ -12,9 +12,10 @@ class InteractiveWeekViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InteractiveWeekView<Event>(
+    return WeekView<Event>(
       key: state,
       width: width,
+      isInteractive: true,
     );
   }
 }

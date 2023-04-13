@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../calendar_event_data.dart';
 import '../components/_internal_components.dart';
 import '../components/event_scroll_notifier.dart';
 import '../enumerations.dart';
@@ -27,6 +28,12 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
   /// A builder that returns a widget to show event on screen.
   final EventTileBuilder<T> eventTileBuilder;
 
+  /// Defines how event tile will be displayed.
+  final SelectedEventTileBuilder<T> selectedEventTileBuilder;
+
+  /// Called when user modifies event.
+  final Function(CalendarEventData<T> event) onEventChanged;
+
   /// Controller for calendar
   final EventController<T> controller;
 
@@ -38,6 +45,9 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
 
   /// Settings for hour indicator lines.
   final HourIndicatorSettings hourIndicatorSettings;
+
+  /// Custom painter for hour indicator.
+  final CustomHourLinePainter customHourLinePainter;
 
   /// Flag to display live time indicator.
   /// If true then indicator will be displayed else not.
@@ -94,6 +104,12 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
 
   final ScrollController scrollController;
 
+  /// Used to define how the Event<T> is updated when modified.
+  final EventUpdate<T> eventUpdate;
+
+  /// Is week view interactive or not.
+  final bool isInteractive;
+
   /// Defines a single day page.
   const InternalDayViewPage({
     Key? key,
@@ -101,9 +117,12 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
     required this.width,
     required this.date,
     required this.eventTileBuilder,
+    required this.selectedEventTileBuilder,
+    required this.onEventChanged,
     required this.controller,
     required this.timeLineBuilder,
     required this.hourIndicatorSettings,
+    required this.customHourLinePainter,
     required this.showLiveLine,
     required this.liveTimeIndicatorSettings,
     required this.heightPerMinute,
@@ -121,6 +140,8 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
     required this.fullDayEventBuilder,
     required this.scrollController,
     required this.dayDetectorBuilder,
+    required this.eventUpdate,
+    required this.isInteractive,
   }) : super(key: key);
 
   @override
@@ -141,13 +162,11 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
                   children: [
                     CustomPaint(
                       size: Size(width, height),
-                      painter: HourLinePainter(
-                        lineColor: hourIndicatorSettings.color,
-                        lineHeight: hourIndicatorSettings.height,
-                        offset: timeLineWidth + hourIndicatorSettings.offset,
+                      painter: customHourLinePainter(
+                        hourIndicatorSettings: hourIndicatorSettings,
                         minuteHeight: heightPerMinute,
-                        verticalLineOffset: verticalLineOffset,
                         showVerticalLine: showVerticalLine,
+                        verticalLineOffset: verticalLineOffset,
                       ),
                     ),
                     dayDetectorBuilder(
@@ -159,15 +178,19 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: EventGenerator<T>(
+                      child: EventLayout<T>(
+                        controller: controller,
                         height: height,
                         date: date,
                         onTileTap: onTileTap,
                         eventArranger: eventArranger,
-                        events: controller.getEventsOnDay(date),
                         heightPerMinute: heightPerMinute,
                         eventTileBuilder: eventTileBuilder,
+                        selectedEventTileBuilder: selectedEventTileBuilder,
+                        onEventChanged: onEventChanged,
                         scrollNotifier: scrollNotifier,
+                        eventUpdate: eventUpdate,
+                        isInteractive: isInteractive,
                         width: width -
                             timeLineWidth -
                             hourIndicatorSettings.offset -

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license
 // that can be found in the LICENSE file.
 
+import 'package:calendar_view/src/painters.dart';
 import 'package:flutter/material.dart';
 
 import '../calendar_constants.dart';
@@ -24,6 +25,12 @@ import '_internal_week_view_page.dart';
 class WeekView<T extends Object?> extends StatefulWidget {
   /// Builder to build tile for events.
   final EventTileBuilder<T>? eventTileBuilder;
+
+  /// Defines how event tile will be displayed.
+  final SelectedEventTileBuilder<T>? selectedEventTileBuilder;
+
+  /// Called when user modifies event.
+  final Function(CalendarEventData<T> event)? onEventChanged;
 
   /// Builder for timeline.
   final DateWidgetBuilder? timeLineBuilder;
@@ -85,7 +92,10 @@ class WeekView<T extends Object?> extends StatefulWidget {
   /// Settings for hour indicator settings.
   final HourIndicatorSettings? hourIndicatorSettings;
 
-
+  /// Custom painter for hour line.
+  ///
+  /// Use this if you want to paint custom hour lines.
+  final CustomHourLinePainter? hourLinePainter;
 
   /// Settings for live time indicator settings.
   final HourIndicatorSettings? liveTimeIndicatorSettings;
@@ -109,6 +119,9 @@ class WeekView<T extends Object?> extends StatefulWidget {
 
   /// Flag to show live time indicator in all day or only [initialDay]
   final bool showLiveTimeLineInAllDays;
+
+  /// Flag to display day seperator lines.
+  final bool showDaySeperatorLines;
 
   /// Offset of time line
   final double timeLineOffset;
@@ -185,21 +198,31 @@ class WeekView<T extends Object?> extends StatefulWidget {
   /// Display full day event builder.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
+  /// Used to define how the Event<T> is updated when modified.
+  final EventUpdate<T>? eventUpdate;
+
+  /// Is week view interactive or not.
+  final bool isInteractive;
+
   /// Main widget for week view.
   const WeekView({
     Key? key,
     this.controller,
     this.eventTileBuilder,
+    this.selectedEventTileBuilder,
+    this.onEventChanged,
     this.pageTransitionDuration = const Duration(milliseconds: 300),
     this.pageTransitionCurve = Curves.ease,
     this.heightPerMinute = 1,
     this.timeLineOffset = 0,
     this.showLiveTimeLineInAllDays = false,
+    this.showDaySeperatorLines = true,
     this.width,
     this.minDay,
     this.maxDay,
     this.initialDay,
     this.hourIndicatorSettings,
+    this.hourLinePainter,
     this.timeLineBuilder,
     this.timeLineWidth,
     this.liveTimeIndicatorSettings,
@@ -226,6 +249,8 @@ class WeekView<T extends Object?> extends StatefulWidget {
     this.headerStyle = const HeaderStyle(),
     this.safeAreaOption = const SafeAreaOption(),
     this.fullDayEventBuilder,
+    this.eventUpdate,
+    this.isInteractive = false,
   })  : assert((timeLineOffset) >= 0,
             "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0,
@@ -261,14 +286,14 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
   late EventArranger<T> _eventArranger;
 
   late HourIndicatorSettings _hourIndicatorSettings;
-
-
+  late CustomHourLinePainter _hourLinePainter;
   late HourIndicatorSettings _liveTimeIndicatorSettings;
 
   late PageController _pageController;
 
   late DateWidgetBuilder _timeLineBuilder;
   late EventTileBuilder<T> _eventTileBuilder;
+  late SelectedEventTileBuilder<T> _selectedEventTileBuilder;
   late WeekPageHeaderBuilder _weekHeaderBuilder;
   late DateWidgetBuilder _weekDayBuilder;
   late WeekNumberBuilder _weekNumberBuilder;
@@ -289,6 +314,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
   late List<WeekDays> _weekDays;
 
   final _scrollConfiguration = EventScrollConfiguration();
+
+  late EventUpdate<T> _eventUpdate;
 
   @override
   void initState() {
@@ -422,11 +449,16 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
                           onDateLongPress: widget.onDateLongPress,
                           onDateTap: widget.onDateTap,
                           eventTileBuilder: _eventTileBuilder,
+                          selectedEventTileBuilder: _selectedEventTileBuilder,
+                          onEventChanged: (event) =>
+                              widget.onEventChanged?.call(event),
                           heightPerMinute: widget.heightPerMinute,
                           hourIndicatorSettings: _hourIndicatorSettings,
+                          customHourLinePainter: _hourLinePainter,
                           dates: dates,
                           showLiveLine: widget.showLiveTimeLineInAllDays ||
                               _showLiveTimeIndicator(dates),
+                          showDaySeperatorLines: widget.showDaySeperatorLines,
                           timeLineOffset: widget.timeLineOffset,
                           timeLineWidth: _timeLineWidth,
                           verticalLineOffset: 0,
@@ -439,6 +471,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
                           minuteSlotSize: widget.minuteSlotSize,
                           scrollConfiguration: _scrollConfiguration,
                           fullDayEventBuilder: _fullDayEventBuilder,
+                          eventUpdate: _eventUpdate,
+                          isInteractive: widget.isInteractive,
                         ),
                       );
                     },
@@ -527,6 +561,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
   void _assignBuilders() {
     _timeLineBuilder = widget.timeLineBuilder ?? _defaultTimeLineBuilder;
     _eventTileBuilder = widget.eventTileBuilder ?? _defaultEventTileBuilder;
+    _selectedEventTileBuilder =
+        widget.selectedEventTileBuilder ?? _defaultSelectedEventTileBuilder;
     _weekHeaderBuilder =
         widget.weekPageHeaderBuilder ?? _defaultWeekPageHeaderBuilder;
     _weekDayBuilder = widget.weekDayBuilder ?? _defaultWeekDayBuilder;
@@ -536,7 +572,15 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
     _fullDayEventBuilder =
         widget.fullDayEventBuilder ?? _defaultFullDayEventBuilder;
 
-  
+    _hourLinePainter = widget.hourLinePainter ?? _defaultHourLinePainter;
+
+    _eventUpdate = widget.eventUpdate ?? _defaultEventUpdate;
+  }
+
+  CalendarEventData<T> _defaultEventUpdate(
+    CalendarEventData<T> event,
+  ) {
+    return event;
   }
 
   Widget _defaultFullDayEventBuilder(
@@ -717,6 +761,42 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
       return Container();
   }
 
+  /// Default selectedEventTileBuilder builder. This builder will be used if
+  /// [widget.selectedEventTileBuilder] is null.
+  Widget _defaultSelectedEventTileBuilder(
+    DateTime date,
+    List<CalendarEventData<T>> events,
+    Rect boundary,
+    DateTime startDuration,
+    DateTime endDuration,
+    Function(double primaryDelta)? changeStartTime,
+    Function(double primaryDelta)? changeEndTime,
+    Function(double primaryDelta) reschedule,
+    VoidCallback onEditComplete,
+  ) {
+    if (events.isNotEmpty)
+      return SelectedRoundedEventTile(
+        borderRadius: BorderRadius.circular(10.0),
+        title: events[0].title,
+        totalEvents: events.length - 1,
+        description: events[0].description,
+        padding: EdgeInsets.all(10.0),
+        backgroundColor: events[0].color,
+        margin: EdgeInsets.all(2.0),
+        titleStyle: events[0].titleStyle,
+        descriptionStyle: events[0].descriptionStyle,
+        showHandles: false,
+        selectedOutlineColor: Theme.of(context).colorScheme.onSurface,
+        handleColor: Theme.of(context).colorScheme.onSurface,
+        changeEndTime: (primaryDelta) => changeEndTime?.call(primaryDelta),
+        changeStartTime: (primaryDelta) => changeStartTime?.call(primaryDelta),
+        reschedule: (value) => reschedule(value),
+        onEditComplete: () => onEditComplete(),
+      );
+    else
+      return SizedBox.shrink();
+  }
+
   /// Default view header builder. This builder will be used if
   /// [widget.dayTitleBuilder] is null.
   Widget _defaultWeekPageHeaderBuilder(DateTime startDate, DateTime endDate) {
@@ -741,7 +821,20 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
     );
   }
 
-
+  HourLinePainter _defaultHourLinePainter({
+    required HourIndicatorSettings hourIndicatorSettings,
+    required double minuteHeight,
+    required bool showVerticalLine,
+    required double verticalLineOffset,
+  }) {
+    return HourLinePainter(
+      lineColor: hourIndicatorSettings.color,
+      lineHeight: hourIndicatorSettings.height,
+      minuteHeight: widget.heightPerMinute,
+      offset: _timeLineWidth + hourIndicatorSettings.offset,
+      showVerticalLine: true,
+    );
+  }
 
   /// Called when user change page using any gesture or inbuilt functions.
   void _onPageChange(int index) {
@@ -815,7 +908,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
   /// Animate to page which gives day calendar for [week].
   ///
   /// Arguments [duration] and [curve] will override default values provided
-  /// as [WeekView.pageTransitionDuration] and [WeekView.pageTransitionCurve]
+  /// as [WeekView.pageTransitionDuration]
+  /// and [WeekView.pageTransitionCurve]
   /// respectively.
   Future<void> animateToWeek(DateTime week,
       {Duration? duration, Curve? curve}) async {

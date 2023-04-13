@@ -4,14 +4,10 @@
 
 import 'package:flutter/material.dart';
 
+import '../../calendar_view.dart';
 import '../components/_internal_components.dart';
 import '../components/event_scroll_notifier.dart';
-import '../enumerations.dart';
-import '../event_arrangers/event_arrangers.dart';
-import '../event_controller.dart';
-import '../modals.dart';
 import '../painters.dart';
-import '../typedefs.dart';
 
 /// A single page for week view.
 class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
@@ -27,6 +23,12 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
   /// Builds tile for a single event.
   final EventTileBuilder<T> eventTileBuilder;
 
+  /// Defines how event tile will be displayed.
+  final SelectedEventTileBuilder<T> selectedEventTileBuilder;
+
+  /// Called when user modifies event.
+  final Function(CalendarEventData<T> event) onEventChanged;
+
   /// A calendar controller that controls all the events and rebuilds widget
   /// if event(s) are added or removed.
   final EventController<T> controller;
@@ -37,8 +39,14 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
   /// Settings for hour indicator lines.
   final HourIndicatorSettings hourIndicatorSettings;
 
+  /// Custom painter for hour indicator.
+  final CustomHourLinePainter customHourLinePainter;
+
   /// Flag to display live line.
   final bool showLiveLine;
+
+  /// Flag to display day seperator lines.
+  final bool showDaySeperatorLines;
 
   /// Settings for live time indicator.
   final HourIndicatorSettings liveTimeIndicatorSettings;
@@ -111,6 +119,11 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
   /// Display full day events.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
+  /// Used to define how the Event<T> is updated when modified.
+  final EventUpdate<T> eventUpdate;
+
+  final bool isInteractive;
+
   /// A single page for week view.
   const InternalWeekViewPage({
     Key? key,
@@ -121,9 +134,12 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
     required this.width,
     required this.dates,
     required this.eventTileBuilder,
+    required this.selectedEventTileBuilder,
+    required this.onEventChanged,
     required this.controller,
     required this.timeLineBuilder,
     required this.hourIndicatorSettings,
+    required this.customHourLinePainter,
     required this.showLiveLine,
     required this.liveTimeIndicatorSettings,
     required this.heightPerMinute,
@@ -141,8 +157,11 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
     required this.weekDays,
     required this.minuteSlotSize,
     required this.scrollConfiguration,
+    required this.showDaySeperatorLines,
     this.fullDayEventBuilder,
     required this.weekDetectorBuilder,
+    required this.eventUpdate,
+    required this.isInteractive,
   }) : super(key: key);
 
   @override
@@ -210,13 +229,11 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
                   children: [
                     CustomPaint(
                       size: Size(width, height),
-                      painter: HourLinePainter(
-                        lineColor: hourIndicatorSettings.color,
-                        lineHeight: hourIndicatorSettings.height,
-                        offset: timeLineWidth + hourIndicatorSettings.offset,
+                      painter: customHourLinePainter(
+                        hourIndicatorSettings: hourIndicatorSettings,
                         minuteHeight: heightPerMinute,
-                        verticalLineOffset: verticalLineOffset,
                         showVerticalLine: showVerticalLine,
+                        verticalLineOffset: verticalLineOffset,
                       ),
                     ),
                     if (showLiveLine && liveTimeIndicatorSettings.height > 0)
@@ -237,14 +254,16 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
                             ...List.generate(
                               filteredDates.length,
                               (index) => Container(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    right: BorderSide(
-                                      color: hourIndicatorSettings.color,
-                                      width: hourIndicatorSettings.height,
-                                    ),
-                                  ),
-                                ),
+                                decoration: showDaySeperatorLines
+                                    ? BoxDecoration(
+                                        border: Border(
+                                          right: BorderSide(
+                                            color: hourIndicatorSettings.color,
+                                            width: hourIndicatorSettings.height,
+                                          ),
+                                        ),
+                                      )
+                                    : null,
                                 height: height,
                                 width: weekTitleWidth,
                                 child: Stack(
@@ -256,17 +275,21 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
                                       date: dates[index],
                                       minuteSlotSize: minuteSlotSize,
                                     ),
-                                    EventGenerator<T>(
+                                    EventLayout(
+                                      controller: controller,
                                       height: height,
-                                      date: filteredDates[index],
-                                      onTileTap: onTileTap,
                                       width: weekTitleWidth,
+                                      heightPerMinute: heightPerMinute,
                                       eventArranger: eventArranger,
                                       eventTileBuilder: eventTileBuilder,
+                                      selectedEventTileBuilder:
+                                          selectedEventTileBuilder,
+                                      onEventChanged: onEventChanged,
+                                      date: filteredDates[index],
+                                      onTileTap: onTileTap,
                                       scrollNotifier: scrollConfiguration,
-                                      events: controller
-                                          .getEventsOnDay(filteredDates[index]),
-                                      heightPerMinute: heightPerMinute,
+                                      eventUpdate: eventUpdate,
+                                      isInteractive: isInteractive,
                                     ),
                                   ],
                                 ),

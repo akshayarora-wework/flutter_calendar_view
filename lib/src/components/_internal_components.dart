@@ -3,7 +3,6 @@
 // that can be found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -434,7 +433,7 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
 /// the [SelectedEventGenerator].
 ///
 /// It also contains the state of the selected [CalendarEventData].
-class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
+class EventLayout<T extends Object?> extends StatefulWidget {
   /// Calendar controller.
   final EventController<T> controller;
 
@@ -467,10 +466,13 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
 
   final EventScrollConfiguration scrollNotifier;
 
+  /// Used to define how the Event<T> is updated when modified.
   final EventUpdate<T> eventUpdate;
 
+  final bool isInteractive;
+
   /// A widget that display event tiles in day/week view.
-  const InteractiveEventLayout({
+  const EventLayout({
     Key? key,
     required this.controller,
     required this.height,
@@ -484,15 +486,14 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
     required this.onTileTap,
     required this.scrollNotifier,
     required this.eventUpdate,
+    required this.isInteractive,
   }) : super(key: key);
 
   @override
-  State<InteractiveEventLayout<T>> createState() =>
-      _InteractiveEventLayoutState<T>();
+  State<EventLayout<T>> createState() => _EventLayoutState<T>();
 }
 
-class _InteractiveEventLayoutState<T extends Object?>
-    extends State<InteractiveEventLayout<T>> {
+class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   /// The selected event that can be modified.
   ValueNotifier<CalendarEventData<T>?> calendarEventData =
       ValueNotifier<CalendarEventData<T>?>(null);
@@ -551,7 +552,7 @@ class _InteractiveEventLayoutState<T extends Object?>
       child: ValueListenableBuilder<CalendarEventData<T>?>(
         valueListenable: calendarEventData,
         builder: (context, value, child) {
-          if (value == null) {
+          if (value == null || !widget.isInteractive) {
             return Stack(
               children: [
                 EventGenerator<T>(
@@ -588,18 +589,21 @@ class _InteractiveEventLayoutState<T extends Object?>
                   width: widget.width,
                 ),
                 SelectedEventGenerator<T>(
-                  onEventChanged: (modifiedEvent) {
-                    // TODO: add custom event change logic.
+                  onEventChanged: (event) {
+                    // modifies the event according to the specified function. 
+                    final modifiedEvent = widget.eventUpdate(event);
 
-                    final changedEvent = widget.eventUpdate(modifiedEvent);
-
+                    /// Replace the event in the controller.
                     widget.controller.replace(
                       eventDataToReplace: widget.controller.selectedEvent!,
-                      newEventData: changedEvent,
+                      newEventData: modifiedEvent,
                     );
 
-                    _selectEvent(changedEvent);
-                    widget.onEventChanged(changedEvent);
+                    // reselect the event
+                    _selectEvent(modifiedEvent);
+
+                    // call the onEventChanged callback.
+                    widget.onEventChanged(modifiedEvent);
                   },
                   height: widget.height,
                   date: widget.date,

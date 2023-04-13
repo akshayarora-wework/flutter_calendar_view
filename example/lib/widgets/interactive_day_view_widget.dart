@@ -15,12 +15,10 @@ class InteractiveDayViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InteractiveDayView<Event>(
+    return DayView<Event>(
       key: state,
       width: width,
-      onEventChanged: (event) {
-        /// This is where I update the event in the database.
-      },
+      isInteractive: true,
     );
   }
 }
