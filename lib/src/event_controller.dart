@@ -57,8 +57,7 @@ class EventController<T extends Object?> extends ChangeNotifier {
   EventFilter<T>? get eventFilter => _eventFilter;
 
   CalendarEventData<T>? get selectedEvent => _selectedEvent;
-  ValueNotifier<CalendarEventData<T>?> selectedEventProvider =
-      ValueNotifier<CalendarEventData<T>?>(null);
+  ValueNotifier<CalendarEventData<T>?> selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(null);
 
   //#endregion
 

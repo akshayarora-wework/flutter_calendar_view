@@ -485,9 +485,6 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   /// The selected event that can be modified.
   ValueNotifier<CalendarEventData<T>?> calendarEventData = ValueNotifier<CalendarEventData<T>?>(null);
 
-  /// The copy of the selected event.
-  CalendarEventData<T>? copyOfSelectedEvent;
-
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
     widget.onTileTap?.call(events, date);
@@ -514,13 +511,13 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   void _selectEvent(CalendarEventData<T> event) {
     widget.controller.selectEvent(event);
     calendarEventData.value = widget.controller.selectedEvent;
-    widget.controller.selectedEventProvider = calendarEventData;
+    widget.controller.selectedEventNotifier = calendarEventData;
   }
 
   void _deselectEvent() {
     widget.controller.deselectEvent();
     calendarEventData.value = null;
-    widget.controller.selectedEventProvider = calendarEventData;
+    widget.controller.selectedEventNotifier = calendarEventData;
   }
 
   @override
