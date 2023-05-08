@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -483,16 +484,16 @@ class EventLayout<T extends Object?> extends StatefulWidget {
 
 class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   /// The selected event that can be modified.
-  ValueNotifier<CalendarEventData<T>?> calendarEventData = ValueNotifier<CalendarEventData<T>?>(null);
+  ValueNotifier<CalendarEventData<T>?> selectedEventData = ValueNotifier<CalendarEventData<T>?>(null);
 
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
     widget.onTileTap?.call(events, date);
     if (widget.controller.selectedEvent == null) {
-      if (calendarEventData.value == null) {
+      if (selectedEventData.value == null) {
         _selectEvent(events.first);
       } else {
-        if (calendarEventData.value! == events.first) {
+        if (selectedEventData.value! == events.first) {
           _deselectEvent();
         } else {
           _selectEvent(events.first);
@@ -510,24 +511,21 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
 
   void _selectEvent(CalendarEventData<T> event) {
     widget.controller.selectEvent(event);
-    calendarEventData = widget.controller.selectedEventNotifier;
+    selectedEventData = widget.controller.selectedEventNotifier;
   }
 
   void _deselectEvent() {
     widget.controller.deselectEvent();
-    calendarEventData = widget.controller.selectedEventNotifier;
+    selectedEventData = widget.controller.selectedEventNotifier;
   }
 
   @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(() {
-      if (widget.controller.selectedEvent == calendarEventData.value) {
-        calendarEventData = widget.controller.selectedEventNotifier;
-      } else {
-        calendarEventData.value = null;
-      }
-    });
+  void didUpdateWidget(covariant EventLayout<T> oldWidget) {
+    if (oldWidget.controller.selectedEvent.hashCode != selectedEventData.value.hashCode) {
+      selectedEventData.value = null;
+    }
+
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -536,23 +534,19 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
       height: widget.height,
       width: widget.width,
       child: ValueListenableBuilder<CalendarEventData<T>?>(
-        valueListenable: calendarEventData,
+        valueListenable: selectedEventData,
         builder: (context, value, child) {
           if (value == null || !widget.isInteractive) {
-            return Stack(
-              children: [
-                EventGenerator<T>(
-                  height: widget.height,
-                  date: widget.date,
-                  onTileTap: onTileTap,
-                  eventArranger: widget.eventArranger,
-                  events: widget.controller.getEventsOnDay(widget.date),
-                  heightPerMinute: widget.heightPerMinute,
-                  eventTileBuilder: widget.eventTileBuilder,
-                  scrollNotifier: widget.scrollNotifier,
-                  width: widget.width,
-                ),
-              ],
+            return EventGenerator<T>(
+              height: widget.height,
+              date: widget.date,
+              onTileTap: onTileTap,
+              eventArranger: widget.eventArranger,
+              events: widget.controller.getEventsOnDay(widget.date),
+              heightPerMinute: widget.heightPerMinute,
+              eventTileBuilder: widget.eventTileBuilder,
+              scrollNotifier: widget.scrollNotifier,
+              width: widget.width,
             );
           } else {
             return Stack(
@@ -595,7 +589,7 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
                   date: widget.date,
                   onTileTap: onTileTap,
                   eventArranger: widget.eventArranger,
-                  selectedEvent: calendarEventData,
+                  selectedEvent: selectedEventData,
                   heightPerMinute: widget.heightPerMinute,
                   selectedEventTileBuilder: widget.selectedEventTileBuilder,
                   scrollNotifier: widget.scrollNotifier,

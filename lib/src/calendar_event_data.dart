@@ -77,16 +77,11 @@ class CalendarEventData<T extends Object?> {
     return other is CalendarEventData<T> &&
         date.compareWithoutTime(other.date) &&
         endDate.compareWithoutTime(other.endDate) &&
-        ((event == null && other.event == null) ||
-            (event != null && other.event != null && event == other.event)) &&
+        ((event == null && other.event == null) || (event != null && other.event != null && event == other.event)) &&
         ((startTime == null && other.startTime == null) ||
-            (startTime != null &&
-                other.startTime != null &&
-                startTime!.hasSameTimeAs(other.startTime!))) &&
+            (startTime != null && other.startTime != null && startTime!.hasSameTimeAs(other.startTime!))) &&
         ((endTime == null && other.endTime == null) ||
-            (endTime != null &&
-                other.endTime != null &&
-                endTime!.hasSameTimeAs(other.endTime!))) &&
+            (endTime != null && other.endTime != null && endTime!.hasSameTimeAs(other.endTime!))) &&
         title == other.title &&
         color == other.color &&
         titleStyle == other.titleStyle &&
@@ -188,8 +183,7 @@ class CalendarEventData<T extends Object?> {
     // Calculate the new end time.
     final newEndTime = endTime!.add(deltaDuration);
 
-    if (newStartTime.isAfter(date.startOfToday) &&
-        newEndTime.isBefore(date.endOfToday)) {
+    if (newStartTime.isAfter(date.startOfToday) && newEndTime.isBefore(date.endOfToday)) {
       // If the new start time is after the start of this day and before the end
       // of this day.
       return copyWith(
@@ -215,6 +209,7 @@ class CalendarEventData<T extends Object?> {
     DateTime? endDate,
     T? event,
   }) {
+    
     return CalendarEventData(
       color: color ?? this.color,
       date: date ?? this.date,
