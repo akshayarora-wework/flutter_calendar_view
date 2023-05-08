@@ -521,7 +521,13 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
 
   @override
   void didUpdateWidget(covariant EventLayout<T> oldWidget) {
-    if (oldWidget.controller.selectedEvent.hashCode != selectedEventData.value.hashCode) {
+    final isSame = widget.controller.selectedEventComparison?.call(
+          oldWidget.controller.selectedEvent,
+          widget.controller.selectedEvent,
+        ) ??
+        false;
+
+    if (!isSame) {
       selectedEventData.value = null;
     }
 

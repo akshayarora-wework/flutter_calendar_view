@@ -95,3 +95,9 @@ typedef CustomHourLinePainter = CustomPainter Function({
 typedef EventUpdate<T extends Object?> = CalendarEventData<T> Function(
   CalendarEventData<T> eventData,
 );
+
+
+typedef SelectedEventComparison<T extends Object?> = bool Function(
+  CalendarEventData<T>? eventData,
+  CalendarEventData<T>? otherEventData,
+);

@@ -22,6 +22,7 @@ class EventController<T extends Object?> extends ChangeNotifier {
     /// [MonthView], [DayView] and [WeekView].
     ///
     EventFilter<T>? eventFilter,
+    this.selectedEventComparison,
   }) : _eventFilter = eventFilter;
 
   //#region Private Fields
@@ -58,6 +59,8 @@ class EventController<T extends Object?> extends ChangeNotifier {
 
   CalendarEventData<T>? get selectedEvent => _selectedEvent;
   ValueNotifier<CalendarEventData<T>?> selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(null);
+
+  SelectedEventComparison<T>? selectedEventComparison;
 
   //#endregion
 
