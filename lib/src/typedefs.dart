@@ -56,8 +56,7 @@ typedef WeekNumberBuilder = Widget? Function(
   DateTime firstDayOfWeek,
 );
 
-typedef FullDayEventBuilder<T> = Widget Function(
-    List<CalendarEventData<T>> events, DateTime date);
+typedef FullDayEventBuilder<T> = Widget Function(List<CalendarEventData<T>> events, DateTime date);
 
 typedef CalendarPageChangeCallBack = void Function(DateTime date, int page);
 
@@ -66,17 +65,13 @@ typedef PageChangeCallback = void Function(
   CalendarEventData event,
 );
 
-typedef StringProvider = String Function(DateTime date,
-    {DateTime? secondaryDate});
+typedef StringProvider = String Function(DateTime date, {DateTime? secondaryDate});
 
-typedef WeekPageHeaderBuilder = Widget Function(
-    DateTime startDate, DateTime endDate);
+typedef WeekPageHeaderBuilder = Widget Function(DateTime startDate, DateTime endDate);
 
-typedef TileTapCallback<T extends Object?> = void Function(
-    CalendarEventData<T> event, DateTime date);
+typedef TileTapCallback<T extends Object?> = void Function(CalendarEventData<T> event, DateTime date);
 
-typedef CellTapCallback<T extends Object?> = void Function(
-    List<CalendarEventData<T>> events, DateTime date);
+typedef CellTapCallback<T extends Object?> = void Function(List<CalendarEventData<T>> events, DateTime date);
 
 typedef DatePressCallback = void Function(DateTime date);
 
@@ -96,8 +91,7 @@ typedef EventUpdate<T extends Object?> = CalendarEventData<T> Function(
   CalendarEventData<T> eventData,
 );
 
-
-typedef SelectedEventComparison<T extends Object?> = bool Function(
-  CalendarEventData<T>? eventData,
-  CalendarEventData<T>? otherEventData,
-);
+typedef SelectedEventComparison<T extends Object?> = bool Function({
+  required CalendarEventData<T>? eventData,
+  required CalendarEventData<T>? otherEventData,
+});
