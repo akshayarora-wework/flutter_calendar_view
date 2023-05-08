@@ -72,6 +72,7 @@ class CalendarEventData<T extends Object?> {
   @override
   String toString() => toJson().toString();
 
+  // ignore: hash_and_equals
   @override
   bool operator ==(Object other) {
     return other is CalendarEventData<T> &&
