@@ -511,22 +511,20 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   void _selectEvent(CalendarEventData<T> event) {
     widget.controller.selectEvent(event);
     calendarEventData = widget.controller.selectedEventNotifier;
-    // calendarEventData.value = widget.controller.selectedEvent;
-    // widget.controller.selectedEventNotifier = calendarEventData;
   }
 
   void _deselectEvent() {
     widget.controller.deselectEvent();
     calendarEventData = widget.controller.selectedEventNotifier;
-    // calendarEventData.value = null;
-    // widget.controller.selectedEventNotifier = calendarEventData;
   }
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(() {
-      if (widget.controller.selectedEvent != calendarEventData.value) {
+      if (widget.controller.selectedEvent == calendarEventData.value) {
+        calendarEventData = widget.controller.selectedEventNotifier;
+      } else {
         calendarEventData.value = null;
       }
     });
