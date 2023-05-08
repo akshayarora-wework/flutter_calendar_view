@@ -66,12 +66,14 @@ class EventController<T extends Object?> extends ChangeNotifier {
   /// Selects the given [event].
   void selectEvent(CalendarEventData<T> event) {
     _selectedEvent = event;
+    selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(_selectedEvent);
     notifyListeners();
   }
 
   /// Deselects the selected event.
   void deselectEvent() {
     _selectedEvent = null;
+    selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(_selectedEvent);
     notifyListeners();
   }
 
