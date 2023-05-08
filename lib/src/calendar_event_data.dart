@@ -89,8 +89,8 @@ class CalendarEventData<T extends Object?> {
         description == other.description;
   }
 
-  @override
-  int get hashCode => super.hashCode;
+  // @override
+  // int get hashCode => super.hashCode;
 
   /// Updates this eventData's startTime.
   CalendarEventData<T>? updateEventStartTime({
@@ -209,7 +209,6 @@ class CalendarEventData<T extends Object?> {
     DateTime? endDate,
     T? event,
   }) {
-    
     return CalendarEventData(
       color: color ?? this.color,
       date: date ?? this.date,
