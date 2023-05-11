@@ -527,12 +527,10 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
         ) ??
         false;
 
-    if (mounted) {
-      if (isSame) {
-        selectedEventData.value = widget.controller.selectedEvent;
-      } else {
-        selectedEventData.value = null;
-      }
+    if (isSame) {
+      selectedEventData.value = widget.controller.selectedEvent;
+    } else {
+      selectedEventData.value = null;
     }
 
     super.didUpdateWidget(oldWidget);
