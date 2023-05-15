@@ -44,7 +44,8 @@ class EventController<T extends Object?> extends ChangeNotifier {
   // Note: Do not use this getter inside of EventController class.
   // use _eventList instead.
   /// Returns list of [CalendarEventData<T>] stored in this controller.
-  List<CalendarEventData<T>> get events => _calendarData.eventList.toList(growable: false);
+  List<CalendarEventData<T>> get events =>
+      _calendarData.eventList.toList(growable: false);
 
   /// This method will provide list of events on particular date.
   ///
@@ -58,7 +59,8 @@ class EventController<T extends Object?> extends ChangeNotifier {
   EventFilter<T>? get eventFilter => _eventFilter;
 
   CalendarEventData<T>? get selectedEvent => _selectedEvent;
-  ValueNotifier<CalendarEventData<T>?> selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(null);
+  ValueNotifier<CalendarEventData<T>?> selectedEventNotifier =
+      ValueNotifier<CalendarEventData<T>?>(null);
 
   SelectedEventComparison<T>? eventComparison;
 
@@ -69,14 +71,15 @@ class EventController<T extends Object?> extends ChangeNotifier {
   /// Selects the given [event].
   void selectEvent(CalendarEventData<T> event) {
     _selectedEvent = event;
-    selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(_selectedEvent);
+    selectedEventNotifier =
+        ValueNotifier<CalendarEventData<T>?>(_selectedEvent);
     notifyListeners();
   }
 
   /// Deselects the selected event.
   void deselectEvent() {
     _selectedEvent = null;
-    selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(_selectedEvent);
+    selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(null);
     notifyListeners();
   }
 
@@ -134,11 +137,13 @@ class EventController<T extends Object?> extends ChangeNotifier {
     required CalendarEventData<T> eventDataToReplace,
     required CalendarEventData<T> newEventData,
   }) {
-    
     late final index;
     if (eventComparison != null) {
       index = events.indexWhere(
-        (element) => eventComparison!(eventData: element, otherEventData: eventDataToReplace) == true,
+        (element) =>
+            eventComparison!(
+                eventData: element, otherEventData: eventDataToReplace) ==
+            true,
       );
     } else {
       /// Find the index of the event to be replaced.
@@ -173,7 +178,8 @@ class EventController<T extends Object?> extends ChangeNotifier {
     for (final rangingEvent in _calendarData.rangingEventList) {
       if (date == rangingEvent.date ||
           date == rangingEvent.endDate ||
-          (date.isBefore(rangingEvent.endDate) && date.isAfter(rangingEvent.date))) {
+          (date.isBefore(rangingEvent.endDate) &&
+              date.isAfter(rangingEvent.date))) {
         events.add(rangingEvent);
       }
     }
@@ -187,7 +193,8 @@ class EventController<T extends Object?> extends ChangeNotifier {
   List<CalendarEventData<T>> getFullDayEvent(DateTime dateTime) {
     final events = <CalendarEventData<T>>[];
     for (final event in _calendarData.fullDayEventList) {
-      if (dateTime.difference(event.date).inDays >= 0 && event.endDate.difference(dateTime).inDays > 0) {
+      if (dateTime.difference(event.date).inDays >= 0 &&
+          event.endDate.difference(dateTime).inDays > 0) {
         events.add(event);
       }
     }
@@ -205,7 +212,8 @@ class EventController<T extends Object?> extends ChangeNotifier {
 
   //#region Private Methods
   void _addEvent(CalendarEventData<T> event) {
-    assert(event.endDate.difference(event.date).inDays >= 0, 'The end date must be greater or equal to the start date');
+    assert(event.endDate.difference(event.date).inDays >= 0,
+        'The end date must be greater or equal to the start date');
     if (_calendarData.eventList.contains(event)) return;
     if (event.endDate.difference(event.date).inDays > 0) {
       if (event.startTime!.isDayStart && event.endTime!.isDayStart) {
