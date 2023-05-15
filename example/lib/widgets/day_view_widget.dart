@@ -18,6 +18,7 @@ class DayViewWidget extends StatelessWidget {
     return DayView<Event>(
       key: state,
       width: width,
+      isInteractive: true,
     );
   }
 }

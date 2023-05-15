@@ -495,45 +495,23 @@ class EventLayout<T extends Object?> extends StatefulWidget {
 }
 
 class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
-  /// The selected event that can be modified.
-  ValueNotifier<CalendarEventData<T>?> selectedEventData =
-      ValueNotifier<CalendarEventData<T>?>(null);
+  /// The selected event Notifier that can be modified.
+  ValueNotifier<CalendarEventData<T>>? selectedEventData;
+
+  /// The events that are displayed on the current day.
+  late List<CalendarEventData<T>> todaysEvents =
+      widget.controller.getEventsOnDay(widget.date);
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final events = widget.controller.getEventsOnDay(widget.date);
-      final index = events.indexWhere(
-        (element) =>
-            widget.controller.eventComparison?.call(
-              otherEventData: widget.controller.selectedEvent,
-              eventData: element,
-            ) ??
-            false,
-      );
-      if (index != -1) {
-        _selectEvent(events[index]);
-      }
-    });
+    _updateSelection();
   }
 
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
     widget.onTileTap?.call(events, date);
-    if (widget.controller.selectedEvent == null) {
-      if (selectedEventData.value == null) {
-        _selectEvent(events.first);
-      } else {
-        if (selectedEventData.value! == events.first) {
-          _deselectEvent();
-        } else {
-          _selectEvent(events.first);
-        }
-      }
-    } else {
-      _deselectEvent();
-    }
+    widget.controller.onEventTap(events.first);
   }
 
   /// Called when user taps outside of any event tiles.
@@ -553,21 +531,23 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
 
   @override
   void didUpdateWidget(covariant EventLayout<T> oldWidget) {
-    final isSame = widget.controller.eventComparison?.call(
-          otherEventData: oldWidget.controller.selectedEvent,
-          eventData: selectedEventData.value,
-        ) ??
-        false;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isSame) {
-        selectedEventData.value = widget.controller.selectedEvent;
-      } else {
-        selectedEventData.value = null;
-      }
-    });
-
+    todaysEvents = widget.controller.getEventsOnDay(widget.date);
+    _updateSelection();
     super.didUpdateWidget(oldWidget);
+  }
+
+  void _updateSelection() {
+    final index = todaysEvents.indexWhere(
+      (element) => widget.controller.eventComparison.call(
+        otherEventData: widget.controller.selectedEvent,
+        eventData: element,
+      ),
+    );
+    if (index != -1) {
+      selectedEventData = widget.controller.selectedEventNotifier;
+    } else {
+      selectedEventData = null;
+    }
   }
 
   @override
@@ -575,22 +555,9 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
     return Container(
       height: widget.height,
       width: widget.width,
-      child: ValueListenableBuilder<CalendarEventData<T>?>(
-        valueListenable: selectedEventData,
-        builder: (context, value, child) {
-          if (value == null || !widget.isInteractive) {
-            return EventGenerator<T>(
-              height: widget.height,
-              date: widget.date,
-              onTileTap: onTileTap,
-              eventArranger: widget.eventArranger,
-              events: widget.controller.getEventsOnDay(widget.date),
-              heightPerMinute: widget.heightPerMinute,
-              eventTileBuilder: widget.eventTileBuilder,
-              scrollNotifier: widget.scrollNotifier,
-              width: widget.width,
-            );
-          } else {
+      child: Builder(
+        builder: (context) {
+          if (selectedEventData == null || !widget.isInteractive) {
             return Stack(
               children: [
                 GestureDetector(
@@ -601,43 +568,68 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
                   date: widget.date,
                   onTileTap: onTileTap,
                   eventArranger: widget.eventArranger,
-                  events: widget.controller.getEventsOnDay(widget.date)
-                    ..removeWhere(
-                      (element) => element == widget.controller.selectedEvent,
-                    ),
+                  events: widget.controller.getEventsOnDay(widget.date),
                   heightPerMinute: widget.heightPerMinute,
                   eventTileBuilder: widget.eventTileBuilder,
                   scrollNotifier: widget.scrollNotifier,
                   width: widget.width,
                 ),
-                SelectedEventGenerator<T>(
-                  onEventChanged: (event) {
-                    // modifies the event according to the specified function.
-                    final modifiedEvent = widget.eventUpdate(event);
-
-                    /// Replace the event in the controller.
-                    widget.controller.replace(
-                      eventDataToReplace: widget.controller.selectedEvent!,
-                      newEventData: modifiedEvent,
-                    );
-
-                    // reselect the event
-                    _selectEvent(modifiedEvent);
-
-                    // call the onEventChanged callback.
-                    widget.onEventChanged(modifiedEvent);
-                  },
-                  height: widget.height,
-                  date: widget.date,
-                  onTileTap: onTileTap,
-                  eventArranger: widget.eventArranger,
-                  selectedEvent: selectedEventData,
-                  heightPerMinute: widget.heightPerMinute,
-                  selectedEventTileBuilder: widget.selectedEventTileBuilder,
-                  scrollNotifier: widget.scrollNotifier,
-                  width: widget.width,
-                ),
               ],
+            );
+          } else {
+            return ValueListenableBuilder<CalendarEventData<T>>(
+              valueListenable: selectedEventData!,
+              builder: (context, value, child) {
+                return Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: onTapOutSide,
+                    ),
+                    EventGenerator<T>(
+                      height: widget.height,
+                      date: widget.date,
+                      onTileTap: onTileTap,
+                      eventArranger: widget.eventArranger,
+                      events: widget.controller.getEventsOnDay(widget.date)
+                        ..removeWhere(
+                          (element) =>
+                              element == widget.controller.selectedEvent,
+                        ),
+                      heightPerMinute: widget.heightPerMinute,
+                      eventTileBuilder: widget.eventTileBuilder,
+                      scrollNotifier: widget.scrollNotifier,
+                      width: widget.width,
+                    ),
+                    SelectedEventGenerator<T>(
+                      onEventChanged: (event) {
+                        // modifies the event according to the specified function.
+                        final modifiedEvent = widget.eventUpdate(event);
+
+                        /// Replace the event in the controller.
+                        widget.controller.replace(
+                          eventDataToReplace: widget.controller.selectedEvent!,
+                          newEventData: modifiedEvent,
+                        );
+
+                        // reselect the event
+                        _selectEvent(modifiedEvent);
+
+                        // call the onEventChanged callback.
+                        widget.onEventChanged(modifiedEvent);
+                      },
+                      height: widget.height,
+                      date: widget.date,
+                      onTileTap: onTileTap,
+                      eventArranger: widget.eventArranger,
+                      selectedEvent: selectedEventData!,
+                      heightPerMinute: widget.heightPerMinute,
+                      selectedEventTileBuilder: widget.selectedEventTileBuilder,
+                      scrollNotifier: widget.scrollNotifier,
+                      width: widget.width,
+                    ),
+                  ],
+                );
+              },
             );
           }
         },

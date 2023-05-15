@@ -2,6 +2,8 @@
 // Use of this source code is governed by a MIT-style license
 // that can be found in the LICENSE file.
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'calendar_event_data.dart';
@@ -22,8 +24,14 @@ class EventController<T extends Object?> extends ChangeNotifier {
     /// [MonthView], [DayView] and [WeekView].
     ///
     EventFilter<T>? eventFilter,
-    this.eventComparison,
-  }) : _eventFilter = eventFilter;
+    EventComparison<T>? eventComparison,
+  }) {
+    _eventFilter = eventFilter;
+    this.eventComparison = eventComparison ??
+        ({required eventData, required otherEventData}) {
+          return eventData == otherEventData;
+        };
+  }
 
   //#region Private Fields
   EventFilter<T>? _eventFilter;
@@ -59,27 +67,38 @@ class EventController<T extends Object?> extends ChangeNotifier {
   EventFilter<T>? get eventFilter => _eventFilter;
 
   CalendarEventData<T>? get selectedEvent => _selectedEvent;
-  ValueNotifier<CalendarEventData<T>?> selectedEventNotifier =
-      ValueNotifier<CalendarEventData<T>?>(null);
+  ValueNotifier<CalendarEventData<T>>? selectedEventNotifier;
 
-  SelectedEventComparison<T>? eventComparison;
+  /// Way to compare events with custom code.
+  late EventComparison<T> eventComparison;
 
   //#endregion
 
   //#region Public Methods
 
+  void onEventTap(CalendarEventData<T> event) {
+    if (eventComparison(eventData: event, otherEventData: _selectedEvent)) {
+      // They are the same so deselect.
+      deselectEvent();
+    } else if (_selectedEvent != null) {
+      // They are different so select the new one.
+      selectEvent(event);
+    } else {
+      selectEvent(event);
+    }
+  }
+
   /// Selects the given [event].
   void selectEvent(CalendarEventData<T> event) {
     _selectedEvent = event;
-    selectedEventNotifier =
-        ValueNotifier<CalendarEventData<T>?>(_selectedEvent);
+    selectedEventNotifier = ValueNotifier<CalendarEventData<T>>(event);
     notifyListeners();
   }
 
   /// Deselects the selected event.
   void deselectEvent() {
     _selectedEvent = null;
-    selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(null);
+    selectedEventNotifier = null;
     notifyListeners();
   }
 
@@ -137,20 +156,14 @@ class EventController<T extends Object?> extends ChangeNotifier {
     required CalendarEventData<T> eventDataToReplace,
     required CalendarEventData<T> newEventData,
   }) {
-    late final index;
-    if (eventComparison != null) {
-      index = events.indexWhere(
-        (element) =>
-            eventComparison!(
-                eventData: element, otherEventData: eventDataToReplace) ==
-            true,
-      );
-    } else {
-      /// Find the index of the event to be replaced.
-      index = events.indexWhere(
-        (element) => element == eventDataToReplace,
-      );
-    }
+    final index = events.indexWhere(
+      (element) =>
+          eventComparison(
+            eventData: element,
+            otherEventData: eventDataToReplace,
+          ) ==
+          true,
+    );
 
     if (index != -1) {
       final event = events[index];
