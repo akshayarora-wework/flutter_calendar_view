@@ -502,19 +502,20 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   @override
   void initState() {
     super.initState();
-
-    final events = widget.controller.getEventsOnDay(widget.date);
-    final index = events.indexWhere(
-      (element) =>
-          widget.controller.eventComparison?.call(
-            otherEventData: widget.controller.selectedEvent,
-            eventData: element,
-          ) ??
-          false,
-    );
-    if (index != -1) {
-      _selectEvent(events[index]);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final events = widget.controller.getEventsOnDay(widget.date);
+      final index = events.indexWhere(
+        (element) =>
+            widget.controller.eventComparison?.call(
+              otherEventData: widget.controller.selectedEvent,
+              eventData: element,
+            ) ??
+            false,
+      );
+      if (index != -1) {
+        _selectEvent(events[index]);
+      }
+    });
   }
 
   /// Called when user taps on event tile.
