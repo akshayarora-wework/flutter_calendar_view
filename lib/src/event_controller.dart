@@ -22,7 +22,7 @@ class EventController<T extends Object?> extends ChangeNotifier {
     /// [MonthView], [DayView] and [WeekView].
     ///
     EventFilter<T>? eventFilter,
-    this.selectedEventComparison,
+    this.eventComparison,
   }) : _eventFilter = eventFilter;
 
   //#region Private Fields
@@ -60,7 +60,7 @@ class EventController<T extends Object?> extends ChangeNotifier {
   CalendarEventData<T>? get selectedEvent => _selectedEvent;
   ValueNotifier<CalendarEventData<T>?> selectedEventNotifier = ValueNotifier<CalendarEventData<T>?>(null);
 
-  SelectedEventComparison<T>? selectedEventComparison;
+  SelectedEventComparison<T>? eventComparison;
 
   //#endregion
 
@@ -134,10 +134,18 @@ class EventController<T extends Object?> extends ChangeNotifier {
     required CalendarEventData<T> eventDataToReplace,
     required CalendarEventData<T> newEventData,
   }) {
-    /// Find the index of the event to be replaced.
-    final index = events.indexWhere(
-      (element) => element == eventDataToReplace,
-    );
+    
+    late final index;
+    if (eventComparison != null) {
+      index = events.indexWhere(
+        (element) => eventComparison!(eventData: element, otherEventData: eventDataToReplace) == true,
+      );
+    } else {
+      /// Find the index of the event to be replaced.
+      index = events.indexWhere(
+        (element) => element == eventDataToReplace,
+      );
+    }
 
     if (index != -1) {
       final event = events[index];
