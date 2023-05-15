@@ -225,13 +225,19 @@ class EventGenerator<T extends Object?> extends StatelessWidget {
         child: GestureDetector(
           onTap: () => onTileTap?.call(events[index].events, date),
           child: Builder(builder: (context) {
-            if (scrollNotifier.shouldScroll && events[index].events.any((element) => element == scrollNotifier.event)) {
+            if (scrollNotifier.shouldScroll &&
+                events[index]
+                    .events
+                    .any((element) => element == scrollNotifier.event)) {
               _scrollToEvent(context);
             }
             return eventTileBuilder(
               date,
               events[index].events,
-              Rect.fromLTWH(events[index].left, events[index].top, width - events[index].right - events[index].left,
+              Rect.fromLTWH(
+                  events[index].left,
+                  events[index].top,
+                  width - events[index].right - events[index].left,
                   height - events[index].bottom - events[index].top),
               events[index].startDuration,
               events[index].endDuration,
@@ -342,13 +348,19 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
         child: GestureDetector(
           onTap: () => onTileTap?.call(events[index].events, date),
           child: Builder(builder: (context) {
-            if (scrollNotifier.shouldScroll && events[index].events.any((element) => element == scrollNotifier.event)) {
+            if (scrollNotifier.shouldScroll &&
+                events[index]
+                    .events
+                    .any((element) => element == scrollNotifier.event)) {
               _scrollToEvent(context);
             }
             return selectedEventTileBuilder(
               date,
               events[index].events,
-              Rect.fromLTWH(events[index].left, events[index].top, width - events[index].right - events[index].left,
+              Rect.fromLTWH(
+                  events[index].left,
+                  events[index].top,
+                  width - events[index].right - events[index].left,
                   height - events[index].bottom - events[index].top),
               events[index].startDuration,
               events[index].endDuration,
@@ -484,7 +496,26 @@ class EventLayout<T extends Object?> extends StatefulWidget {
 
 class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   /// The selected event that can be modified.
-  ValueNotifier<CalendarEventData<T>?> selectedEventData = ValueNotifier<CalendarEventData<T>?>(null);
+  ValueNotifier<CalendarEventData<T>?> selectedEventData =
+      ValueNotifier<CalendarEventData<T>?>(null);
+
+  @override
+  void initState() {
+    super.initState();
+
+    final events = widget.controller.getEventsOnDay(widget.date);
+    final index = events.indexWhere(
+      (element) =>
+          widget.controller.eventComparison?.call(
+            otherEventData: widget.controller.selectedEvent,
+            eventData: element,
+          ) ??
+          false,
+    );
+    if (index != -1) {
+      _selectEvent(events[index]);
+    }
+  }
 
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
