@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +21,9 @@ class DayViewWidget extends StatelessWidget {
       key: state,
       width: width,
       isInteractive: true,
+      onDateTap: (date) {
+        log(date.toString());
+      },
     );
   }
 }
