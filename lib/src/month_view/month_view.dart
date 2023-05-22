@@ -191,6 +191,7 @@ class MonthViewState<T extends Object?> extends State<MonthView<T>> {
   late double _cellHeight;
 
   late CellBuilder<T> _cellBuilder;
+  late CellBuilder<T> _selectedCellBuilder;
 
   late WeekDayBuilder _weekBuilder;
 
@@ -473,7 +474,7 @@ class MonthViewState<T extends Object?> extends State<MonthView<T>> {
   }
 
   /// Default cell builder. Used when [widget.cellBuilder] is null
-  Widget _defaultCellBuilder(date, List<CalendarEventData<T>> events, isToday, isInMonth) {
+  Widget _defaultCellBuilder(date, List<CalendarEventData<T>> events, isToday, isInMonth, int gridIndex) {
     return FilledCell<T>(
       date: date,
       shouldHighlight: isToday,
@@ -618,6 +619,7 @@ class _MonthPageBuilder<T> extends StatelessWidget {
                 events,
                 monthDays[index].compareWithoutTime(DateTime.now()),
                 monthDays[index].month == date.month,
+                index,
               ),
             ),
           );

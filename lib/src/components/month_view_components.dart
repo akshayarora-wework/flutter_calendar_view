@@ -127,8 +127,7 @@ class FilledCell<T extends Object?> extends StatelessWidget {
           ),
           CircleAvatar(
             radius: highlightRadius,
-            backgroundColor:
-                shouldHighlight ? highlightColor : Colors.transparent,
+            backgroundColor: shouldHighlight ? highlightColor : Colors.transparent,
             child: Text(
               dateStringBuilder?.call(date) ?? "${date.day}",
               style: TextStyle(
@@ -154,15 +153,13 @@ class FilledCell<T extends Object?> extends StatelessWidget {
                     children: List.generate(
                       events.length,
                       (index) => GestureDetector(
-                        onTap: () =>
-                            onTileTap?.call(events[index], events[index].date),
+                        onTap: () => onTileTap?.call(events[index], events[index].date),
                         child: Container(
                           decoration: BoxDecoration(
                             color: events[index].color,
                             borderRadius: BorderRadius.circular(4.0),
                           ),
-                          margin: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 3.0),
+                          margin: EdgeInsets.symmetric(vertical: 2.0, horizontal: 3.0),
                           padding: const EdgeInsets.all(2.0),
                           alignment: Alignment.center,
                           child: Row(
@@ -215,12 +212,10 @@ class MonthPageHeader extends CalendarPageHeader {
           // ignore_for_file: deprecated_member_use_from_same_package
           backgroundColor: backgroundColor,
           iconColor: iconColor,
-          dateStringBuilder:
-              dateStringBuilder ?? MonthPageHeader._monthStringBuilder,
+          dateStringBuilder: dateStringBuilder ?? MonthPageHeader._monthStringBuilder,
           headerStyle: headerStyle,
         );
-  static String _monthStringBuilder(DateTime date, {DateTime? secondaryDate}) =>
-      "${date.month} - ${date.year}";
+  static String _monthStringBuilder(DateTime date, {DateTime? secondaryDate}) => "${date.month} - ${date.year}";
 }
 
 class WeekDayTile extends StatelessWidget {
