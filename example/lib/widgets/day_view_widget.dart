@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../model/event.dart';
 
-class DayViewWidget extends StatelessWidget {
+class DayViewWidget extends StatefulWidget {
   final GlobalKey<DayViewState>? state;
   final double? width;
 
@@ -16,13 +16,26 @@ class DayViewWidget extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<DayViewWidget> createState() => _DayViewWidgetState();
+}
+
+class _DayViewWidgetState extends State<DayViewWidget> {
+  @override
   Widget build(BuildContext context) {
     return DayView<Event>(
-      key: state,
-      width: width,
+      key: widget.state,
+      width: widget.width,
       isInteractive: true,
       onDateTap: (date) {
-        log(date.toString());
+        CalendarControllerProvider.of<Event>(context).controller.add(
+              CalendarEventData<Event>(
+                title: 'title',
+                date: date,
+                startTime: date,
+                endTime: date.add(Duration(hours: 1)),
+                event: Event(title: 'event'),
+              ),
+            );
       },
     );
   }

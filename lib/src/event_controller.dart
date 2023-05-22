@@ -77,6 +77,14 @@ class EventController<T extends Object?> extends ChangeNotifier {
   //#region Public Methods
 
   void onEventTap(CalendarEventData<T> event) {
+    if (selectedEvent != null) {
+      if (eventComparison(eventData: event, otherEventData: _selectedEvent)) {
+        deselectEvent();
+      } else {
+        selectEvent(event);
+      }
+    }
+
     if (eventComparison(eventData: event, otherEventData: _selectedEvent)) {
       // They are the same so deselect.
       deselectEvent();
