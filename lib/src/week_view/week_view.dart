@@ -646,15 +646,18 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
                     minuteSlotSize.minutes * i,
                   ),
                 ),
-                onTap: () => widget.onDateTap?.call(
-                  DateTime(
-                    date.year,
-                    date.month,
-                    date.day,
-                    0,
-                    minuteSlotSize.minutes * i,
-                  ),
-                ),
+                onTap: () {
+                  _controller?.deselectEvent();
+                  widget.onDateTap?.call(
+                    DateTime(
+                      date.year,
+                      date.month,
+                      date.day,
+                      0,
+                      minuteSlotSize.minutes * i,
+                    ),
+                  );
+                },
                 child: SizedBox(width: width, height: heightPerSlot),
               ),
             ),

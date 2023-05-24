@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +16,9 @@ class WeekViewWidget extends StatelessWidget {
     return WeekView<Event>(
       key: state,
       width: width,
+      onDateTap: (date) {
+        log(date.toString());
+      },
       isInteractive: true,
     );
   }

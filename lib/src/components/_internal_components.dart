@@ -497,7 +497,6 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
 
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
-    log('message');
     if (widget.isInteractive) {
       _deselectEvent();
     }
@@ -549,24 +548,16 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
       child: Builder(
         builder: (context) {
           if (selectedEventData == null || !widget.isInteractive) {
-            return Stack(
-              children: [
-                GestureDetector(
-                  onTap: onTapOutSide,
-                  behavior: HitTestBehavior.opaque,
-                ),
-                EventGenerator<T>(
-                  height: widget.height,
-                  date: widget.date,
-                  onTileTap: onTileTap,
-                  eventArranger: widget.eventArranger,
-                  events: widget.controller.getEventsOnDay(widget.date),
-                  heightPerMinute: widget.heightPerMinute,
-                  eventTileBuilder: widget.eventTileBuilder,
-                  scrollNotifier: widget.scrollNotifier,
-                  width: widget.width,
-                ),
-              ],
+            return EventGenerator<T>(
+              height: widget.height,
+              date: widget.date,
+              onTileTap: onTileTap,
+              eventArranger: widget.eventArranger,
+              events: widget.controller.getEventsOnDay(widget.date),
+              heightPerMinute: widget.heightPerMinute,
+              eventTileBuilder: widget.eventTileBuilder,
+              scrollNotifier: widget.scrollNotifier,
+              width: widget.width,
             );
           } else {
             return ValueListenableBuilder<CalendarEventData<T>>(

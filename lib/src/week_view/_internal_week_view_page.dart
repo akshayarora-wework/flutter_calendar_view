@@ -282,8 +282,7 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
                                       heightPerMinute: heightPerMinute,
                                       eventArranger: eventArranger,
                                       eventTileBuilder: eventTileBuilder,
-                                      selectedEventTileBuilder:
-                                          selectedEventTileBuilder,
+                                      selectedEventTileBuilder: selectedEventTileBuilder,
                                       onEventChanged: onEventChanged,
                                       date: filteredDates[index],
                                       onTileTap: onTileTap,
