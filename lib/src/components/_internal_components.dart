@@ -225,19 +225,13 @@ class EventGenerator<T extends Object?> extends StatelessWidget {
         child: GestureDetector(
           onTap: () => onTileTap?.call(events[index].events, date),
           child: Builder(builder: (context) {
-            if (scrollNotifier.shouldScroll &&
-                events[index]
-                    .events
-                    .any((element) => element == scrollNotifier.event)) {
+            if (scrollNotifier.shouldScroll && events[index].events.any((element) => element == scrollNotifier.event)) {
               _scrollToEvent(context);
             }
             return eventTileBuilder(
               date,
               events[index].events,
-              Rect.fromLTWH(
-                  events[index].left,
-                  events[index].top,
-                  width - events[index].right - events[index].left,
+              Rect.fromLTWH(events[index].left, events[index].top, width - events[index].right - events[index].left,
                   height - events[index].bottom - events[index].top),
               events[index].startDuration,
               events[index].endDuration,
@@ -348,19 +342,13 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
         child: GestureDetector(
           onTap: () => onTileTap?.call(events[index].events, date),
           child: Builder(builder: (context) {
-            if (scrollNotifier.shouldScroll &&
-                events[index]
-                    .events
-                    .any((element) => element == scrollNotifier.event)) {
+            if (scrollNotifier.shouldScroll && events[index].events.any((element) => element == scrollNotifier.event)) {
               _scrollToEvent(context);
             }
             return selectedEventTileBuilder(
               date,
               events[index].events,
-              Rect.fromLTWH(
-                  events[index].left,
-                  events[index].top,
-                  width - events[index].right - events[index].left,
+              Rect.fromLTWH(events[index].left, events[index].top, width - events[index].right - events[index].left,
                   height - events[index].bottom - events[index].top),
               events[index].startDuration,
               events[index].endDuration,
@@ -499,8 +487,7 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   ValueNotifier<CalendarEventData<T>>? selectedEventData;
 
   /// The events that are displayed on the current day.
-  late List<CalendarEventData<T>> todaysEvents =
-      widget.controller.getEventsOnDay(widget.date);
+  late List<CalendarEventData<T>> todaysEvents = widget.controller.getEventsOnDay(widget.date);
 
   @override
   void initState() {
@@ -510,6 +497,7 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
 
   /// Called when user taps on event tile.
   void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
+    log('message');
     if (widget.isInteractive) {
       _deselectEvent();
     }
@@ -561,16 +549,23 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
       child: Builder(
         builder: (context) {
           if (selectedEventData == null || !widget.isInteractive) {
-            return EventGenerator<T>(
-              height: widget.height,
-              date: widget.date,
-              onTileTap: onTileTap,
-              eventArranger: widget.eventArranger,
-              events: widget.controller.getEventsOnDay(widget.date),
-              heightPerMinute: widget.heightPerMinute,
-              eventTileBuilder: widget.eventTileBuilder,
-              scrollNotifier: widget.scrollNotifier,
-              width: widget.width,
+            return Stack(
+              children: [
+                GestureDetector(
+                  onTap: onTapOutSide,
+                ),
+                EventGenerator<T>(
+                  height: widget.height,
+                  date: widget.date,
+                  onTileTap: onTileTap,
+                  eventArranger: widget.eventArranger,
+                  events: widget.controller.getEventsOnDay(widget.date),
+                  heightPerMinute: widget.heightPerMinute,
+                  eventTileBuilder: widget.eventTileBuilder,
+                  scrollNotifier: widget.scrollNotifier,
+                  width: widget.width,
+                ),
+              ],
             );
           } else {
             return ValueListenableBuilder<CalendarEventData<T>>(
@@ -588,8 +583,7 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
                       eventArranger: widget.eventArranger,
                       events: widget.controller.getEventsOnDay(widget.date)
                         ..removeWhere(
-                          (element) =>
-                              element == widget.controller.selectedEvent,
+                          (element) => element == widget.controller.selectedEvent,
                         ),
                       heightPerMinute: widget.heightPerMinute,
                       eventTileBuilder: widget.eventTileBuilder,
