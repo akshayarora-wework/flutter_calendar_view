@@ -553,6 +553,7 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
               children: [
                 GestureDetector(
                   onTap: onTapOutSide,
+                  behavior: HitTestBehavior.opaque,
                 ),
                 EventGenerator<T>(
                   height: widget.height,
