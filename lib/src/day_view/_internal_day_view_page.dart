@@ -31,9 +31,6 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
   /// Defines how event tile will be displayed.
   final SelectedEventTileBuilder<T> selectedEventTileBuilder;
 
-  /// Called when user modifies event.
-  final Function(CalendarEventData<T> event) onEventChanged;
-
   /// Controller for calendar
   final EventController<T> controller;
 
@@ -104,9 +101,6 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
 
   final ScrollController scrollController;
 
-  /// Used to define how the Event<T> is updated when modified.
-  final EventUpdate<T> eventUpdate;
-
   /// Is week view interactive or not.
   final bool isInteractive;
 
@@ -118,7 +112,6 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
     required this.date,
     required this.eventTileBuilder,
     required this.selectedEventTileBuilder,
-    required this.onEventChanged,
     required this.controller,
     required this.timeLineBuilder,
     required this.hourIndicatorSettings,
@@ -140,7 +133,6 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
     required this.fullDayEventBuilder,
     required this.scrollController,
     required this.dayDetectorBuilder,
-    required this.eventUpdate,
     required this.isInteractive,
   }) : super(key: key);
 
@@ -187,14 +179,9 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
                         heightPerMinute: heightPerMinute,
                         eventTileBuilder: eventTileBuilder,
                         selectedEventTileBuilder: selectedEventTileBuilder,
-                        onEventChanged: onEventChanged,
                         scrollNotifier: scrollNotifier,
-                        eventUpdate: eventUpdate,
                         isInteractive: isInteractive,
-                        width: width -
-                            timeLineWidth -
-                            hourIndicatorSettings.offset -
-                            verticalLineOffset,
+                        width: width - timeLineWidth - hourIndicatorSettings.offset - verticalLineOffset,
                       ),
                     ),
                     TimeLine(

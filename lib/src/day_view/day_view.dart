@@ -30,8 +30,6 @@ class DayView<T extends Object?> extends StatefulWidget {
   /// Defines how event tile will be displayed.
   final SelectedEventTileBuilder<T>? selectedEventTileBuilder;
 
-  /// Called when user modifies event.
-  final Function(CalendarEventData<T> event)? onEventChanged;
 
   /// A function to generate the DateString in the calendar title.
   /// Useful for I18n
@@ -190,8 +188,6 @@ class DayView<T extends Object?> extends StatefulWidget {
   /// Display full day event builder.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
-  final EventUpdate<T>? eventUpdate;
-
   final bool isInteractive;
 
   final bool showHeader;
@@ -201,7 +197,6 @@ class DayView<T extends Object?> extends StatefulWidget {
     Key? key,
     this.eventTileBuilder,
     this.selectedEventTileBuilder,
-    this.onEventChanged,
     this.dateStringBuilder,
     this.timeStringBuilder,
     this.controller,
@@ -236,7 +231,6 @@ class DayView<T extends Object?> extends StatefulWidget {
     this.scrollPhysics,
     this.pageViewPhysics,
     this.dayDetectorBuilder,
-    this.eventUpdate,
     this.isInteractive = false,
     this.showHeader = false,
   })  : assert(timeLineOffset >= 0, "timeLineOffset must be greater than or equal to 0"),
@@ -279,7 +273,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   late SelectedEventTileBuilder<T> _selectedEventTileBuilder;
 
-  late Function(CalendarEventData<T> event) _onEventChanged;
 
   late DateWidgetBuilder _dayTitleBuilder;
 
@@ -297,8 +290,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   final _scrollConfiguration = EventScrollConfiguration<T>();
 
-  late EventUpdate<T> _eventUpdate;
-
   @override
   void initState() {
     super.initState();
@@ -314,7 +305,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     _scrollController = ScrollController(initialScrollOffset: widget.scrollOffset);
     _pageController = PageController(initialPage: _currentIndex);
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
-    _onEventChanged = widget.onEventChanged ?? (_) {};
     _assignBuilders();
   }
 
@@ -411,7 +401,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                           dayDetectorBuilder: _dayDetectorBuilder,
                           eventTileBuilder: _eventTileBuilder,
                           selectedEventTileBuilder: _selectedEventTileBuilder,
-                          onEventChanged: _onEventChanged,
+                      
                           heightPerMinute: widget.heightPerMinute,
                           hourIndicatorSettings: _hourIndicatorSettings,
                           customHourLinePainter: _hourLinePainter,
@@ -432,7 +422,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                           scrollNotifier: _scrollConfiguration,
                           fullDayEventBuilder: _fullDayEventBuilder,
                           scrollController: _scrollController,
-                          eventUpdate: _eventUpdate,
                           isInteractive: widget.isInteractive,
                         ),
                       );
@@ -504,10 +493,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     _dayTitleBuilder = widget.dayTitleBuilder ?? _defaultDayBuilder;
     _fullDayEventBuilder = widget.fullDayEventBuilder ?? _defaultFullDayEventBuilder;
     _dayDetectorBuilder = widget.dayDetectorBuilder ?? _defaultPressDetectorBuilder;
-
     _hourLinePainter = widget.hourLinePainter ?? _defaultHourLinePainter;
-
-    _eventUpdate = widget.eventUpdate ?? _defaultEventUpdate;
   }
 
   CalendarEventData<T> _defaultEventUpdate(

@@ -25,11 +25,17 @@ class EventController<T extends Object?> extends ChangeNotifier {
     ///
     EventFilter<T>? eventFilter,
     EventComparison<T>? eventComparison,
+    EventUpdate<T>? eventUpdate,
+    this.onEventChanged,
   }) {
     _eventFilter = eventFilter;
     this.eventComparison = eventComparison ??
         ({required eventData, required otherEventData}) {
           return eventData == otherEventData;
+        };
+    this.eventUpdate = eventUpdate ??
+        (eventData) {
+          return eventData;
         };
   }
 
@@ -71,6 +77,11 @@ class EventController<T extends Object?> extends ChangeNotifier {
   /// Way to compare events with custom code.
   late EventComparison<T> eventComparison;
 
+  /// This event will be called when an event is updated.
+  late EventUpdate<T> eventUpdate;
+
+  final Function(CalendarEventData<T> event)? onEventChanged;
+
   //#endregion
 
   //#region Public Methods
@@ -85,16 +96,6 @@ class EventController<T extends Object?> extends ChangeNotifier {
     } else {
       selectEvent(event);
     }
-
-    // if (eventComparison(eventData: event, otherEventData: _selectedEvent)) {
-    //   // They are the same so deselect.
-    //   deselectEvent();
-    // } else if (_selectedEvent != null) {
-    //   // They are different so select the new one.
-    //   selectEvent(event);
-    // } else {
-    //   selectEvent(event);
-    // }
   }
 
   /// Selects the given [event].

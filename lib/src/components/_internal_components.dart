@@ -444,9 +444,6 @@ class EventLayout<T extends Object?> extends StatefulWidget {
   /// Defines how event tile will be displayed.
   final SelectedEventTileBuilder<T> selectedEventTileBuilder;
 
-  /// Called when user modifies event.
-  final Function(CalendarEventData<T> event) onEventChanged;
-
   /// Defines date for which events will be displayed in given display area.
   final DateTime date;
 
@@ -454,9 +451,6 @@ class EventLayout<T extends Object?> extends StatefulWidget {
   final CellTapCallback<T>? onTileTap;
 
   final EventScrollConfiguration scrollNotifier;
-
-  /// Used to define how the Event<T> is updated when modified.
-  final EventUpdate<T> eventUpdate;
 
   final bool isInteractive;
 
@@ -470,11 +464,9 @@ class EventLayout<T extends Object?> extends StatefulWidget {
     required this.eventArranger,
     required this.eventTileBuilder,
     required this.selectedEventTileBuilder,
-    required this.onEventChanged,
     required this.date,
     required this.onTileTap,
     required this.scrollNotifier,
-    required this.eventUpdate,
     required this.isInteractive,
   }) : super(key: key);
 
@@ -493,6 +485,9 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   void initState() {
     super.initState();
     _updateSelection();
+    todaysEvents.forEach((element) {
+      log('${element.description} start: ${element.startTime}, end: ${element.endTime}');
+    });
   }
 
   /// Called when user taps on event tile.
@@ -585,19 +580,18 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
                     SelectedEventGenerator<T>(
                       onEventChanged: (event) {
                         // modifies the event according to the specified function.
-                        final modifiedEvent = widget.eventUpdate(event);
+                        final modifiedEvent = widget.controller.eventUpdate(event);
 
                         /// Replace the event in the controller.
                         widget.controller.replace(
                           eventDataToReplace: widget.controller.selectedEvent!,
                           newEventData: modifiedEvent,
                         );
-
                         // reselect the event
                         _selectEvent(modifiedEvent);
-
+                        
                         // call the onEventChanged callback.
-                        widget.onEventChanged(modifiedEvent);
+                        widget.controller.onEventChanged?.call(modifiedEvent);
                       },
                       height: widget.height,
                       date: widget.date,

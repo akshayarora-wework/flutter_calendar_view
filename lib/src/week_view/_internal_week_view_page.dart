@@ -26,9 +26,6 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
   /// Defines how event tile will be displayed.
   final SelectedEventTileBuilder<T> selectedEventTileBuilder;
 
-  /// Called when user modifies event.
-  final Function(CalendarEventData<T> event) onEventChanged;
-
   /// A calendar controller that controls all the events and rebuilds widget
   /// if event(s) are added or removed.
   final EventController<T> controller;
@@ -119,9 +116,7 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
   /// Display full day events.
   final FullDayEventBuilder<T>? fullDayEventBuilder;
 
-  /// Used to define how the Event<T> is updated when modified.
-  final EventUpdate<T> eventUpdate;
-
+  /// Is interactive
   final bool isInteractive;
 
   /// A single page for week view.
@@ -135,7 +130,6 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
     required this.dates,
     required this.eventTileBuilder,
     required this.selectedEventTileBuilder,
-    required this.onEventChanged,
     required this.controller,
     required this.timeLineBuilder,
     required this.hourIndicatorSettings,
@@ -160,7 +154,6 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
     required this.showDaySeperatorLines,
     this.fullDayEventBuilder,
     required this.weekDetectorBuilder,
-    required this.eventUpdate,
     required this.isInteractive,
   }) : super(key: key);
 
@@ -283,11 +276,9 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
                                       eventArranger: eventArranger,
                                       eventTileBuilder: eventTileBuilder,
                                       selectedEventTileBuilder: selectedEventTileBuilder,
-                                      onEventChanged: onEventChanged,
                                       date: filteredDates[index],
                                       onTileTap: onTileTap,
                                       scrollNotifier: scrollConfiguration,
-                                      eventUpdate: eventUpdate,
                                       isInteractive: isInteractive,
                                     ),
                                   ],
