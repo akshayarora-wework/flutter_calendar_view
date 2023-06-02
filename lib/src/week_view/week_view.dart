@@ -302,9 +302,7 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
 
   EventController<T>? _controller;
 
-  late ScrollController _scrollController;
-
-  ScrollController get scrollController => _scrollController;
+  late double _scrollOffset;
 
   late List<WeekDays> _weekDays;
 
@@ -324,7 +322,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
     _regulateCurrentDate();
 
     _calculateHeights();
-    _scrollController = ScrollController(initialScrollOffset: widget.scrollOffset);
+    _scrollOffset = widget.scrollOffset;
+    // _scrollController = ScrollController(initialScrollOffset: widget.scrollOffset);
     _pageController = PageController(initialPage: _currentIndex);
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
 
@@ -419,7 +418,10 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
                       final dates =
                           DateTime(_minDate.year, _minDate.month, _minDate.day + (index * DateTime.daysPerWeek))
                               .datesOfWeek(start: widget.startDay);
-
+                      final scrollController = ScrollController(initialScrollOffset: _scrollOffset);
+                      scrollController.addListener(() {
+                        _scrollOffset = scrollController.offset;
+                      });
                       return ValueListenableBuilder(
                         valueListenable: _scrollConfiguration,
                         builder: (_, __, ___) => InternalWeekViewPage<T>(
@@ -450,7 +452,7 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
                           showVerticalLine: true,
                           controller: controller,
                           hourHeight: _hourHeight,
-                          scrollController: _scrollController,
+                          scrollController: scrollController,
                           eventArranger: _eventArranger,
                           weekDays: _weekDays,
                           minuteSlotSize: widget.minuteSlotSize,
@@ -918,17 +920,17 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
   }
 
   /// Animate to specific scroll controller offset
-  void animateTo(
-    double offset, {
-    Duration duration = const Duration(milliseconds: 200),
-    Curve curve = Curves.linear,
-  }) {
-    _scrollController.animateTo(
-      offset,
-      duration: duration,
-      curve: curve,
-    );
-  }
+  // void animateTo(
+  //   double offset, {
+  //   Duration duration = const Duration(milliseconds: 200),
+  //   Curve curve = Curves.linear,
+  // }) {
+  //   _scrollController.animateTo(
+  //     offset,
+  //     duration: duration,
+  //     curve: curve,
+  //   );
+  // }
 
   /// check if any dates contains current date or not.
   /// Returns true if it does else false.

@@ -30,7 +30,6 @@ class DayView<T extends Object?> extends StatefulWidget {
   /// Defines how event tile will be displayed.
   final SelectedEventTileBuilder<T>? selectedEventTileBuilder;
 
-
   /// A function to generate the DateString in the calendar title.
   /// Useful for I18n
   final StringProvider? dateStringBuilder;
@@ -273,7 +272,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   late SelectedEventTileBuilder<T> _selectedEventTileBuilder;
 
-
   late DateWidgetBuilder _dayTitleBuilder;
 
   late FullDayEventBuilder<T> _fullDayEventBuilder;
@@ -282,9 +280,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   EventController<T>? _controller;
 
-  late ScrollController _scrollController;
-
-  ScrollController get scrollController => _scrollController;
+  late double _scrollOffset;
 
   late VoidCallback _reloadCallback;
 
@@ -302,7 +298,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     _regulateCurrentDate();
 
     _calculateHeights();
-    _scrollController = ScrollController(initialScrollOffset: widget.scrollOffset);
+    _scrollOffset = widget.scrollOffset;
     _pageController = PageController(initialPage: _currentIndex);
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
     _assignBuilders();
@@ -391,6 +387,10 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                     onPageChanged: _onPageChange,
                     itemBuilder: (_, index) {
                       final date = DateTime(_minDate.year, _minDate.month, _minDate.day + index);
+                      final scrollController = ScrollController(initialScrollOffset: _scrollOffset);
+                      scrollController.addListener(() {
+                        _scrollOffset = scrollController.offset;
+                      });
                       return ValueListenableBuilder(
                         valueListenable: _scrollConfiguration,
                         builder: (_, __, ___) => InteractiveInternalDayViewPage<T>(
@@ -401,7 +401,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                           dayDetectorBuilder: _dayDetectorBuilder,
                           eventTileBuilder: _eventTileBuilder,
                           selectedEventTileBuilder: _selectedEventTileBuilder,
-                      
                           heightPerMinute: widget.heightPerMinute,
                           hourIndicatorSettings: _hourIndicatorSettings,
                           customHourLinePainter: _hourLinePainter,
@@ -421,7 +420,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                           minuteSlotSize: widget.minuteSlotSize,
                           scrollNotifier: _scrollConfiguration,
                           fullDayEventBuilder: _fullDayEventBuilder,
-                          scrollController: _scrollController,
+                          scrollController: scrollController,
                           isInteractive: widget.isInteractive,
                         ),
                       );
@@ -818,17 +817,17 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
   }
 
   /// Animate to specific scroll controller offset
-  void animateTo(
-    double offset, {
-    Duration duration = const Duration(milliseconds: 200),
-    Curve curve = Curves.linear,
-  }) {
-    _scrollController.animateTo(
-      offset,
-      duration: duration,
-      curve: curve,
-    );
-  }
+  // void animateTo(
+  //   double offset, {
+  //   Duration duration = const Duration(milliseconds: 200),
+  //   Curve curve = Curves.linear,
+  // }) {
+  //   _scrollController.animateTo(
+  //     offset,
+  //     duration: duration,
+  //     curve: curve,
+  //   );
+  // }
 
   /// Returns the current visible date in day view.
   DateTime get currentDate => DateTime(_currentDate.year, _currentDate.month, _currentDate.day);

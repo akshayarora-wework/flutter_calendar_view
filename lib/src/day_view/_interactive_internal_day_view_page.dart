@@ -99,7 +99,7 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatelessWidget 
   /// Display full day events.
   final FullDayEventBuilder<T> fullDayEventBuilder;
 
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   final bool isInteractive;
 
