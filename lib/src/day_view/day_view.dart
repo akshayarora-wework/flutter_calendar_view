@@ -191,6 +191,8 @@ class DayView<T extends Object?> extends StatefulWidget {
 
   final bool showHeader;
 
+  final bool scrollEnabled;
+
   /// Main widget for day view.
   const DayView({
     Key? key,
@@ -232,6 +234,7 @@ class DayView<T extends Object?> extends StatefulWidget {
     this.dayDetectorBuilder,
     this.isInteractive = false,
     this.showHeader = false,
+    this.scrollEnabled = true,
   })  : assert(timeLineOffset >= 0, "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0, "Calendar width must be greater than 0."),
         assert(timeLineWidth == null || timeLineWidth > 0, "Time line width must be greater than 0."),
@@ -286,6 +289,8 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   final _scrollConfiguration = EventScrollConfiguration<T>();
 
+  late bool _isScrollEnabled;
+
   @override
   void initState() {
     super.initState();
@@ -302,6 +307,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     _pageController = PageController(initialPage: _currentIndex);
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
     _assignBuilders();
+    _isScrollEnabled = widget.scrollEnabled;
   }
 
   @override
@@ -345,6 +351,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     }
 
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
+    _isScrollEnabled = widget.scrollEnabled;
 
     // Update heights.
     _calculateHeights();
@@ -422,6 +429,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                           fullDayEventBuilder: _fullDayEventBuilder,
                           scrollController: scrollController,
                           isInteractive: widget.isInteractive,
+                          scrollEnabled: _isScrollEnabled,
                         ),
                       );
                     },

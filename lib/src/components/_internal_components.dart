@@ -3,8 +3,6 @@
 // that can be found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../calendar_event_data.dart';
@@ -357,7 +355,6 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                   primaryDelta: primaryDelta,
                   heightPerMinute: heightPerMinute,
                 );
-
                 selectedEvent.value = newEventData;
               },
               (primaryDelta) {
@@ -485,9 +482,6 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
   void initState() {
     super.initState();
     _updateSelection();
-    todaysEvents.forEach((element) {
-      log('${element.description} start: ${element.startTime}, end: ${element.endTime}');
-    });
   }
 
   /// Called when user taps on event tile.
@@ -589,7 +583,7 @@ class _EventLayoutState<T extends Object?> extends State<EventLayout<T>> {
                         );
                         // reselect the event
                         _selectEvent(modifiedEvent);
-                        
+
                         // call the onEventChanged callback.
                         widget.controller.onEventChanged?.call(modifiedEvent);
                       },

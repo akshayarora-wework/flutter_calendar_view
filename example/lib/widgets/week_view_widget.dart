@@ -16,9 +16,7 @@ class WeekViewWidget extends StatelessWidget {
     return WeekView<Event>(
       key: state,
       width: width,
-      onDateTap: (date) {
-        log(date.toString());
-      },
+      onDateTap: (date) {},
       isInteractive: true,
     );
   }
