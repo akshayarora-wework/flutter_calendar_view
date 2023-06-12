@@ -119,6 +119,8 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
   /// Is interactive
   final bool isInteractive;
 
+  final bool isControllPressed;
+
   /// A single page for week view.
   const InternalWeekViewPage({
     Key? key,
@@ -155,6 +157,7 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
     this.fullDayEventBuilder,
     required this.weekDetectorBuilder,
     required this.isInteractive,
+    required this.isControllPressed,
   }) : super(key: key);
 
   @override
@@ -215,6 +218,7 @@ class InternalWeekViewPage<T extends Object?> extends StatelessWidget {
           Expanded(
             child: SingleChildScrollView(
               controller: scrollController,
+              physics: isControllPressed ? NeverScrollableScrollPhysics() : null,
               child: SizedBox(
                 height: height,
                 width: width,

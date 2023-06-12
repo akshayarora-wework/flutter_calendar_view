@@ -203,6 +203,8 @@ class WeekView<T extends Object?> extends StatefulWidget {
 
   final bool showHeader;
 
+  final bool isControllPressed;
+
   /// Main widget for week view.
   const WeekView({
     Key? key,
@@ -247,9 +249,9 @@ class WeekView<T extends Object?> extends StatefulWidget {
     this.headerStyle = const HeaderStyle(),
     this.safeAreaOption = const SafeAreaOption(),
     this.fullDayEventBuilder,
-    // this.eventUpdate,
     this.isInteractive = false,
     this.showHeader = true,
+    this.isControllPressed = false,
   })  : assert((timeLineOffset) >= 0, "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0, "Calendar width must be greater than 0."),
         assert(timeLineWidth == null || timeLineWidth > 0, "Time line width must be greater than 0."),
@@ -308,6 +310,8 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
 
   final _scrollConfiguration = EventScrollConfiguration();
 
+  late bool _isControllPressed;
+
   @override
   void initState() {
     super.initState();
@@ -326,7 +330,7 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
     // _scrollController = ScrollController(initialScrollOffset: widget.scrollOffset);
     _pageController = PageController(initialPage: _currentIndex);
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
-
+    _isControllPressed = widget.isControllPressed;
     _assignBuilders();
   }
 
@@ -374,7 +378,7 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
     }
 
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
-
+    _isControllPressed = widget.isControllPressed;
     // Update heights.
     _calculateHeights();
 
@@ -459,6 +463,7 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
                           scrollConfiguration: _scrollConfiguration,
                           fullDayEventBuilder: _fullDayEventBuilder,
                           isInteractive: widget.isInteractive,
+                          isControllPressed: _isControllPressed,
                         ),
                       );
                     },

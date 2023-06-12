@@ -2,6 +2,9 @@
 // Use of this source code is governed by a MIT-style license
 // that can be found in the LICENSE file.
 
+import 'dart:developer';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../calendar_event_data.dart';
@@ -103,7 +106,7 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatelessWidget 
 
   final bool isInteractive;
 
-  final bool scrollEnabled;
+  final bool isControlPressed;
 
   /// Defines a single day page.
   const InteractiveInternalDayViewPage({
@@ -135,7 +138,7 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatelessWidget 
     required this.scrollController,
     required this.dayDetectorBuilder,
     required this.isInteractive,
-    required this.scrollEnabled,
+    required this.isControlPressed,
   }) : super(key: key);
 
   @override
@@ -149,7 +152,7 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatelessWidget 
           Expanded(
             child: SingleChildScrollView(
               controller: scrollController,
-              physics: scrollEnabled ? null : const NeverScrollableScrollPhysics(),
+              physics: isControlPressed ? NeverScrollableScrollPhysics() : null,
               child: SizedBox(
                 height: height,
                 width: width,

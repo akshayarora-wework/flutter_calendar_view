@@ -137,6 +137,8 @@ class MonthView<T extends Object?> extends StatefulWidget {
 
   final bool showHeader;
 
+  final bool isControllPressed;
+
   /// Main [Widget] to display month view.
   const MonthView({
     Key? key,
@@ -165,6 +167,7 @@ class MonthView<T extends Object?> extends StatefulWidget {
     this.headerStyle = const HeaderStyle(),
     this.safeAreaOption = const SafeAreaOption(),
     this.showHeader = true,
+    this.isControllPressed = false,
   }) : super(key: key);
 
   @override
@@ -201,6 +204,8 @@ class MonthViewState<T extends Object?> extends State<MonthView<T>> {
 
   late VoidCallback _reloadCallback;
 
+  late bool _isControllPressed;
+
   @override
   void initState() {
     super.initState();
@@ -216,7 +221,7 @@ class MonthViewState<T extends Object?> extends State<MonthView<T>> {
 
     // Initialize page controller to control page actions.
     _pageController = PageController(initialPage: _currentIndex);
-
+    _isControllPressed = widget.isControllPressed;
     _assignBuilders();
   }
 
@@ -260,7 +265,7 @@ class MonthViewState<T extends Object?> extends State<MonthView<T>> {
 
       _pageController.jumpToPage(_currentIndex);
     }
-
+    _isControllPressed = widget.isControllPressed;
     // Update builders and callbacks
     _assignBuilders();
 
@@ -291,6 +296,7 @@ class MonthViewState<T extends Object?> extends State<MonthView<T>> {
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
+                physics: _isControllPressed ? NeverScrollableScrollPhysics() : null,
                 onPageChanged: _onPageChange,
                 itemBuilder: (_, index) {
                   final date = DateTime(_minDate.year, _minDate.month + index);
