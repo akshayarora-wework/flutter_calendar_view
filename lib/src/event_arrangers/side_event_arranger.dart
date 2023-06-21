@@ -77,8 +77,13 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
           continue;
         }
 
-        final startTime = sideEvent.event.startTime!;
-        final endTime = sideEvent.event.endTime!;
+        var startTime = sideEvent.event.startTime!;
+        var endTime = sideEvent.event.endTime!;
+        final duration = endTime.difference(startTime);
+        if (duration.inMinutes < 10) {
+          startTime = sideEvent.event.startTime!.subtract(Duration(minutes: 5));
+          endTime = sideEvent.event.endTime!.add(Duration(minutes: 5));
+        }
 
         final bottom =
             height - (endTime.getTotalMinutes == 0 ? Constants.minutesADay : endTime.getTotalMinutes) * heightPerMinute;

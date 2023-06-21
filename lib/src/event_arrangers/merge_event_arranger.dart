@@ -41,9 +41,8 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
 
       var startTime = event.startTime!;
       var endTime = event.endTime!;
-
+      
       final duration = endTime.difference(startTime);
-
       if (duration.inMinutes < 10) {
         startTime = event.startTime!.subtract(Duration(minutes: 5));
         endTime = event.endTime!.add(Duration(minutes: 5));
