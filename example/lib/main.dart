@@ -48,6 +48,7 @@ List<CalendarEventData<Event>> _events = [
     description: "Today is project meeting.",
     startTime: DateTime(_now.year, _now.month, _now.day, 18, 30),
     endTime: DateTime(_now.year, _now.month, _now.day, 22),
+    isActive: false,
   ),
   CalendarEventData(
     date: _now.add(Duration(days: 1)),
@@ -56,6 +57,7 @@ List<CalendarEventData<Event>> _events = [
     event: Event(title: "Wedding anniversary"),
     title: "Wedding anniversary",
     description: "Attend uncle's wedding anniversary.",
+    isActive: false,
   ),
   CalendarEventData(
     date: _now,
@@ -64,6 +66,7 @@ List<CalendarEventData<Event>> _events = [
     event: Event(title: "Football Tournament"),
     title: "Football Tournament",
     description: "Go to football tournament.",
+    isActive: false,
   ),
   CalendarEventData(
     date: _now.add(Duration(days: 3)),
@@ -74,6 +77,7 @@ List<CalendarEventData<Event>> _events = [
     event: Event(title: "Sprint Meeting."),
     title: "Sprint Meeting.",
     description: "Last day of project submission for last year.",
+    isActive: false,
   ),
   CalendarEventData(
     date: _now.subtract(Duration(days: 2)),
@@ -84,6 +88,7 @@ List<CalendarEventData<Event>> _events = [
     event: Event(title: "Team Meeting"),
     title: "Team Meeting",
     description: "Team Meeting",
+    isActive: false,
   ),
   CalendarEventData(
     date: _now.subtract(Duration(days: 2)),
@@ -94,5 +99,6 @@ List<CalendarEventData<Event>> _events = [
     event: Event(title: "Chemistry Viva"),
     title: "Chemistry Viva",
     description: "Today is Joe's birthday.",
+    isActive: false,
   ),
 ];
