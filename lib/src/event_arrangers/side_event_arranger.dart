@@ -43,23 +43,19 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
 
       while (concurrentEvents.isNotEmpty) {
         final event = concurrentEvents[currentEventIndex];
-        final end = event.endTime!.getTotalMinutes == 0
-            ? Constants.minutesADay
-            : event.endTime!.getTotalMinutes;
+        final end = event.endTime!.getTotalMinutes == 0 ? Constants.minutesADay : event.endTime!.getTotalMinutes;
         sideEventData.add(_SideEventData(column: column, event: event));
         concurrentEvents.removeAt(currentEventIndex);
 
         while (currentEventIndex < concurrentEvents.length) {
-          if (end <
-              concurrentEvents[currentEventIndex].startTime!.getTotalMinutes) {
+          if (end < concurrentEvents[currentEventIndex].startTime!.getTotalMinutes) {
             break;
           }
 
           currentEventIndex++;
         }
 
-        if (concurrentEvents.isNotEmpty &&
-            currentEventIndex >= concurrentEvents.length) {
+        if (concurrentEvents.isNotEmpty && currentEventIndex >= concurrentEvents.length) {
           column++;
           currentEventIndex = 0;
         }
@@ -68,8 +64,7 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
       final slotWidth = width / column;
 
       for (final sideEvent in sideEventData) {
-        if (sideEvent.event.startTime == null ||
-            sideEvent.event.endTime == null) {
+        if (sideEvent.event.startTime == null || sideEvent.event.endTime == null) {
           assert(() {
             try {
               debugPrint("Start time or end time of an event can not be null. "
@@ -84,11 +79,9 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
 
         final startTime = sideEvent.event.startTime!;
         final endTime = sideEvent.event.endTime!;
-        final bottom = height -
-            (endTime.getTotalMinutes == 0
-                    ? Constants.minutesADay
-                    : endTime.getTotalMinutes) *
-                heightPerMinute;
+
+        final bottom =
+            height - (endTime.getTotalMinutes == 0 ? Constants.minutesADay : endTime.getTotalMinutes) * heightPerMinute;
         arrangedEvents.add(OrganizedCalendarEventData<T>(
           left: slotWidth * (sideEvent.column - 1),
           right: slotWidth * (column - sideEvent.column),

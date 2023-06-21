@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import '../calendar_event_data.dart';
@@ -215,9 +216,15 @@ class EventGenerator<T extends Object?> extends StatelessWidget {
     );
 
     return List.generate(events.length, (index) {
+      final event = events[index];
+      final duration = event.endDuration.difference(event.startDuration);
+
+      double top = event.top;
+      double bottom = event.bottom;
+
       return Positioned(
-        top: events[index].top,
-        bottom: events[index].bottom,
+        top: top,
+        bottom: bottom,
         left: events[index].left,
         right: events[index].right,
         child: GestureDetector(
@@ -229,8 +236,12 @@ class EventGenerator<T extends Object?> extends StatelessWidget {
             return eventTileBuilder(
               date,
               events[index].events,
-              Rect.fromLTWH(events[index].left, events[index].top, width - events[index].right - events[index].left,
-                  height - events[index].bottom - events[index].top),
+              Rect.fromLTWH(
+                events[index].left,
+                top,
+                width - events[index].right - events[index].left,
+                height - bottom - events[index].top,
+              ),
               events[index].startDuration,
               events[index].endDuration,
             );

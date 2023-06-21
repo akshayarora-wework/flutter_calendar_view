@@ -24,12 +24,10 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
       if (event.startTime == null ||
           event.endTime == null ||
           event.endTime!.getTotalMinutes <= event.startTime!.getTotalMinutes) {
-        if (!(event.endTime!.getTotalMinutes == 0 &&
-            event.startTime!.getTotalMinutes > 0)) {
+        if (!(event.endTime!.getTotalMinutes == 0 && event.startTime!.getTotalMinutes > 0)) {
           assert(() {
             try {
-              debugPrint(
-                  "Failed to add event because of one of the given reasons: "
+              debugPrint("Failed to add event because of one of the given reasons: "
                   "\n1. Start time or end time might be null"
                   "\n2. endTime occurs before or at the same time as startTime."
                   "\nEvent data: \n$event\n");
@@ -41,28 +39,30 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
         }
       }
 
-      final startTime = event.startTime!;
-      final endTime = event.endTime!;
+      var startTime = event.startTime!;
+      var endTime = event.endTime!;
+
+      final duration = endTime.difference(startTime);
+
+      if (duration.inMinutes < 10) {
+        startTime = event.startTime!.subtract(Duration(minutes: 5));
+        endTime = event.endTime!.add(Duration(minutes: 5));
+      }
 
       final eventStart = startTime.getTotalMinutes;
-      final eventEnd = endTime.getTotalMinutes == 0
-          ? Constants.minutesADay
-          : endTime.getTotalMinutes;
+      final eventEnd = endTime.getTotalMinutes == 0 ? Constants.minutesADay : endTime.getTotalMinutes;
 
       final arrangeEventLen = arrangedEvents.length;
 
       var eventIndex = -1;
 
       for (var i = 0; i < arrangeEventLen; i++) {
-        final arrangedEventStart =
-            arrangedEvents[i].startDuration.getTotalMinutes;
-        final arrangedEventEnd =
-            arrangedEvents[i].endDuration.getTotalMinutes == 0
-                ? Constants.minutesADay
-                : arrangedEvents[i].endDuration.getTotalMinutes;
+        final arrangedEventStart = arrangedEvents[i].startDuration.getTotalMinutes;
+        final arrangedEventEnd = arrangedEvents[i].endDuration.getTotalMinutes == 0
+            ? Constants.minutesADay
+            : arrangedEvents[i].endDuration.getTotalMinutes;
 
-        if (_checkIsOverlapping(
-            arrangedEventStart, arrangedEventEnd, eventStart, eventEnd)) {
+        if (_checkIsOverlapping(arrangedEventStart, arrangedEventEnd, eventStart, eventEnd)) {
           eventIndex = i;
           break;
         }
@@ -70,9 +70,7 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
 
       if (eventIndex == -1) {
         final top = eventStart * heightPerMinute;
-        final bottom = eventEnd * heightPerMinute == height
-            ? 0.0
-            : height - eventEnd * heightPerMinute;
+        final bottom = eventEnd * heightPerMinute == height ? 0.0 : height - eventEnd * heightPerMinute;
 
         final newEvent = OrganizedCalendarEventData<T>(
           top: top,
@@ -88,30 +86,24 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
       } else {
         final arrangedEventData = arrangedEvents[eventIndex];
 
-        final arrangedEventStart =
-            arrangedEventData.startDuration.getTotalMinutes;
-        final arrangedEventEnd =
-            arrangedEventData.endDuration.getTotalMinutes == 0
-                ? Constants.minutesADay
-                : arrangedEventData.endDuration.getTotalMinutes;
+        final arrangedEventStart = arrangedEventData.startDuration.getTotalMinutes;
+        final arrangedEventEnd = arrangedEventData.endDuration.getTotalMinutes == 0
+            ? Constants.minutesADay
+            : arrangedEventData.endDuration.getTotalMinutes;
 
         final startDuration = math.min(eventStart, arrangedEventStart);
         final endDuration = math.max(eventEnd, arrangedEventEnd);
 
         final top = startDuration * heightPerMinute;
-        final bottom = endDuration * heightPerMinute == height
-            ? 0.0
-            : height - endDuration * heightPerMinute;
+        final bottom = endDuration * heightPerMinute == height ? 0.0 : height - endDuration * heightPerMinute;
 
         final newEvent = OrganizedCalendarEventData<T>(
           top: top,
           bottom: bottom,
           left: 0,
           right: 0,
-          startDuration:
-              arrangedEventData.startDuration.copyFromMinutes(startDuration),
-          endDuration:
-              arrangedEventData.endDuration.copyFromMinutes(endDuration),
+          startDuration: arrangedEventData.startDuration.copyFromMinutes(startDuration),
+          endDuration: arrangedEventData.endDuration.copyFromMinutes(endDuration),
           events: arrangedEventData.events..add(event),
         );
 
@@ -122,10 +114,8 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
     return arrangedEvents;
   }
 
-  bool _checkIsOverlapping(int arrangedEventStart, int arrangedEventEnd,
-      int eventStart, int eventEnd) {
-    return (arrangedEventStart >= eventStart &&
-            arrangedEventStart <= eventEnd) ||
+  bool _checkIsOverlapping(int arrangedEventStart, int arrangedEventEnd, int eventStart, int eventEnd) {
+    return (arrangedEventStart >= eventStart && arrangedEventStart <= eventEnd) ||
         (arrangedEventEnd >= eventStart && arrangedEventEnd <= eventEnd) ||
         (eventStart >= arrangedEventStart && eventStart <= arrangedEventEnd) ||
         (eventEnd >= arrangedEventStart && eventEnd <= arrangedEventEnd);
