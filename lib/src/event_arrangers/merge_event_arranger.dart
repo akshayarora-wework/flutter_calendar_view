@@ -41,7 +41,7 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
 
       var startTime = event.startTime!;
       var endTime = event.endTime!;
-      
+
       final duration = endTime.difference(startTime);
       if (duration.inMinutes < 10) {
         startTime = event.startTime!.subtract(Duration(minutes: 5));
@@ -114,9 +114,9 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
   }
 
   bool _checkIsOverlapping(int arrangedEventStart, int arrangedEventEnd, int eventStart, int eventEnd) {
-    return (arrangedEventStart >= eventStart && arrangedEventStart <= eventEnd) ||
-        (arrangedEventEnd >= eventStart && arrangedEventEnd <= eventEnd) ||
-        (eventStart >= arrangedEventStart && eventStart <= arrangedEventEnd) ||
-        (eventEnd >= arrangedEventStart && eventEnd <= arrangedEventEnd);
+    return (arrangedEventStart > eventStart && arrangedEventStart < eventEnd) ||
+        (arrangedEventEnd > eventStart && arrangedEventEnd < eventEnd) ||
+        (eventStart > arrangedEventStart && eventStart < arrangedEventEnd) ||
+        (eventEnd > arrangedEventStart && eventEnd < arrangedEventEnd);
   }
 }
