@@ -3,10 +3,7 @@
 // that can be found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:developer';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../calendar_constants.dart';
 import '../calendar_controller_provider.dart';
@@ -287,6 +284,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
   EventController<T>? _controller;
 
   late double _scrollOffset;
+  late double _scrollPosition;
 
   late VoidCallback _reloadCallback;
 
@@ -398,10 +396,16 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                     onPageChanged: _onPageChange,
                     itemBuilder: (_, index) {
                       final date = DateTime(_minDate.year, _minDate.month, _minDate.day + index);
-                      final scrollController = ScrollController(initialScrollOffset: _scrollOffset);
+
+                      final scrollController = ScrollController(
+                        initialScrollOffset: _scrollOffset,
+                      );
+
                       scrollController.addListener(() {
                         _scrollOffset = scrollController.offset;
+                        _scrollPosition = scrollController.position.pixels / scrollController.position.maxScrollExtent;
                       });
+
                       return ValueListenableBuilder(
                         valueListenable: _scrollConfiguration,
                         builder: (_, __, ___) => InteractiveInternalDayViewPage<T>(
