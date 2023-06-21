@@ -193,6 +193,8 @@ class DayView<T extends Object?> extends StatefulWidget {
 
   final bool isControllPressed;
 
+  final Duration minimumDuration;
+
   /// Main widget for day view.
   const DayView({
     Key? key,
@@ -235,6 +237,7 @@ class DayView<T extends Object?> extends StatefulWidget {
     this.isInteractive = false,
     this.showHeader = false,
     this.isControllPressed = false,
+    this.minimumDuration = const Duration(minutes: 10),
   })  : assert(timeLineOffset >= 0, "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0, "Calendar width must be greater than 0."),
         assert(timeLineWidth == null || timeLineWidth > 0, "Time line width must be greater than 0."),
@@ -307,7 +310,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     _calculateHeights();
     _scrollOffset = widget.scrollOffset;
     _pageController = PageController(initialPage: _currentIndex);
-    _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
+    _eventArranger = widget.eventArranger ?? SideEventArranger<T>(minimumDuration: widget.minimumDuration);
     _assignBuilders();
   }
 
@@ -351,7 +354,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
       _pageController.jumpToPage(_currentIndex);
     }
 
-    _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
+    _eventArranger = widget.eventArranger ?? SideEventArranger<T>(minimumDuration: widget.minimumDuration);
 
     _isControllPressed = widget.isControllPressed;
 

@@ -7,7 +7,11 @@ part of 'event_arrangers.dart';
 class SideEventArranger<T extends Object?> extends EventArranger<T> {
   /// This class will provide method that will arrange
   /// all the events side by side.
-  const SideEventArranger();
+  const SideEventArranger({
+    required this.minimumDuration,
+  });
+
+  final Duration minimumDuration;
 
   @override
   List<OrganizedCalendarEventData<T>> arrange({
@@ -16,7 +20,7 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
     required double width,
     required double heightPerMinute,
   }) {
-    final mergedEvents = MergeEventArranger<T>().arrange(
+    final mergedEvents = MergeEventArranger<T>(minimumDuration: minimumDuration).arrange(
       events: events,
       height: height,
       width: width,
@@ -80,9 +84,9 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
         var startTime = sideEvent.event.startTime!;
         var endTime = sideEvent.event.endTime!;
         final duration = endTime.difference(startTime);
-        if (duration.inMinutes < 10) {
-          startTime = sideEvent.event.startTime!.subtract(Duration(minutes: 5));
-          endTime = sideEvent.event.endTime!.add(Duration(minutes: 5));
+        if (duration < minimumDuration) {
+          startTime = sideEvent.event.startTime!.subtract(Duration(minutes: (minimumDuration.inMinutes / 2).toInt()));
+          endTime = sideEvent.event.endTime!.add(Duration(minutes: (minimumDuration.inMinutes / 2).toInt()));
         }
 
         final bottom =

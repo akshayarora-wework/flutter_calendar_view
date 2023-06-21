@@ -9,7 +9,11 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
   /// events. and that will act like one single event.
   /// [OrganizedCalendarEventData.events] will gives
   /// list of all the combined events.
-  const MergeEventArranger();
+  const MergeEventArranger({
+    required this.minimumDuration,
+  });
+
+  final Duration minimumDuration;
 
   @override
   List<OrganizedCalendarEventData<T>> arrange({
@@ -43,9 +47,9 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
       var endTime = event.endTime!;
 
       final duration = endTime.difference(startTime);
-      if (duration.inMinutes < 10) {
-        startTime = event.startTime!.subtract(Duration(minutes: 5));
-        endTime = event.endTime!.add(Duration(minutes: 5));
+      if (duration < minimumDuration) {
+        startTime = event.startTime!.subtract(Duration(minutes: (minimumDuration.inMinutes / 2).toInt()));
+        endTime = event.endTime!.add(Duration(minutes: (minimumDuration.inMinutes / 2).toInt()));
       }
 
       final eventStart = startTime.getTotalMinutes;

@@ -205,6 +205,8 @@ class WeekView<T extends Object?> extends StatefulWidget {
 
   final bool isControllPressed;
 
+  final Duration minimumDuration;
+
   /// Main widget for week view.
   const WeekView({
     Key? key,
@@ -252,6 +254,7 @@ class WeekView<T extends Object?> extends StatefulWidget {
     this.isInteractive = false,
     this.showHeader = true,
     this.isControllPressed = false,
+    this.minimumDuration = const Duration(minutes: 10),
   })  : assert((timeLineOffset) >= 0, "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0, "Calendar width must be greater than 0."),
         assert(timeLineWidth == null || timeLineWidth > 0, "Time line width must be greater than 0."),
@@ -329,7 +332,7 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
     _scrollOffset = widget.scrollOffset;
     // _scrollController = ScrollController(initialScrollOffset: widget.scrollOffset);
     _pageController = PageController(initialPage: _currentIndex);
-    _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
+    _eventArranger = widget.eventArranger ?? SideEventArranger<T>(minimumDuration: widget.minimumDuration);
     _isControllPressed = widget.isControllPressed;
     _assignBuilders();
   }
@@ -377,7 +380,7 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
       _pageController.jumpToPage(_currentIndex);
     }
 
-    _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
+    _eventArranger = widget.eventArranger ?? SideEventArranger<T>(minimumDuration: widget.minimumDuration);
     _isControllPressed = widget.isControllPressed;
     // Update heights.
     _calculateHeights();
