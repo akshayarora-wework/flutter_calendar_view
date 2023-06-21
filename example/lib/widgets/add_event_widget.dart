@@ -272,7 +272,7 @@ class _AddEventWidgetState extends State<AddEventWidget> {
       event: Event(
         title: _title,
       ),
-      isActive: false,
+   
     );
 
     widget.onEventAdd?.call(event);

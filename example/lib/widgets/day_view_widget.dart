@@ -34,7 +34,7 @@ class _DayViewWidgetState extends State<DayViewWidget> {
                 startTime: date,
                 endTime: date.add(Duration(hours: 1)),
                 event: Event(title: 'event'),
-                isActive: false,
+         
               ),
             );
       },

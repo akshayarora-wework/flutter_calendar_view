@@ -43,8 +43,6 @@ class CalendarEventData<T extends Object?> {
   /// Define style of description.
   final TextStyle? descriptionStyle;
 
-  final bool isActive;
-
   /// Stores all the events on [date]
   const CalendarEventData({
     required this.title,
@@ -57,7 +55,6 @@ class CalendarEventData<T extends Object?> {
     this.descriptionStyle,
     DateTime? endDate,
     required this.date,
-    required this.isActive,
   }) : _endDate = endDate;
 
   DateTime get endDate => _endDate ?? date;
@@ -222,7 +219,6 @@ class CalendarEventData<T extends Object?> {
       endTime: endTime ?? this.endTime,
       endDate: endDate ?? this.endDate,
       event: event ?? this.event,
-      isActive: isActive ?? this.isActive,
     );
   }
 }
