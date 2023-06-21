@@ -16,13 +16,11 @@ class CalendarEventData<T extends Object?> {
   /// [endTime] and [startTime] will defines time on same day.
   /// This is required when you are using [CalendarEventData] for [DayView]
   final DateTime? startTime;
-  final DateTime actualStartTime;
 
   /// Defines the end time of the event.
   /// [endTime] and [startTime] defines time on same day.
   /// This is required when you are using [CalendarEventData] for [DayView]
   final DateTime? endTime;
-  final DateTime actualEndTime;
 
   /// Title of the event.
   final String title;
@@ -57,8 +55,6 @@ class CalendarEventData<T extends Object?> {
     this.descriptionStyle,
     DateTime? endDate,
     required this.date,
-    required this.actualEndTime,
-    required this.actualStartTime,
   }) : _endDate = endDate;
 
   DateTime get endDate => _endDate ?? date;
@@ -211,8 +207,6 @@ class CalendarEventData<T extends Object?> {
     DateTime? startTime,
     DateTime? endTime,
     DateTime? endDate,
-    DateTime? ralStartTime,
-    DateTime? realEndTime,
     T? event,
   }) {
     return CalendarEventData(
@@ -224,8 +218,6 @@ class CalendarEventData<T extends Object?> {
       endTime: endTime ?? this.endTime,
       endDate: endDate ?? this.endDate,
       event: event ?? this.event,
-      actualEndTime: realEndTime ?? this.actualEndTime,
-      actualStartTime: ralStartTime ?? this.actualStartTime,
     );
   }
 }

@@ -93,7 +93,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
             ),
             onSaved: (value) => _title = value?.trim() ?? "",
             validator: (value) {
-              if (value == null || value == "") return "Please enter event title.";
+              if (value == null || value == "")
+                return "Please enter event title.";
 
               return null;
             },
@@ -112,7 +113,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                     labelText: "Start Date",
                   ),
                   validator: (value) {
-                    if (value == null || value == "") return "Please select date.";
+                    if (value == null || value == "")
+                      return "Please select date.";
 
                     return null;
                   },
@@ -132,7 +134,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                     labelText: "End Date",
                   ),
                   validator: (value) {
-                    if (value == null || value == "") return "Please select date.";
+                    if (value == null || value == "")
+                      return "Please select date.";
 
                     return null;
                   },
@@ -158,7 +161,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                     labelText: "Start Time",
                   ),
                   validator: (value) {
-                    if (value == null || value == "") return "Please select start time.";
+                    if (value == null || value == "")
+                      return "Please select start time.";
 
                     return null;
                   },
@@ -178,7 +182,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
                     labelText: "End Time",
                   ),
                   validator: (value) {
-                    if (value == null || value == "") return "Please select end time.";
+                    if (value == null || value == "")
+                      return "Please select end time.";
 
                     return null;
                   },
@@ -208,7 +213,8 @@ class _AddEventWidgetState extends State<AddEventWidget> {
             maxLines: 10,
             maxLength: 1000,
             validator: (value) {
-              if (value == null || value.trim() == "") return "Please enter event description.";
+              if (value == null || value.trim() == "")
+                return "Please enter event description.";
 
               return null;
             },
@@ -260,8 +266,6 @@ class _AddEventWidgetState extends State<AddEventWidget> {
       color: _color,
       endTime: _endTime,
       startTime: _startTime,
-      actualStartTime: _startTime ?? DateTime.now(),
-      actualEndTime: _endTime ?? DateTime.now().add(Duration(hours: 1)),
       description: _description,
       endDate: _endDate,
       title: _title,
