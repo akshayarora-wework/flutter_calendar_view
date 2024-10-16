@@ -37,8 +37,22 @@ class WeekPageHeader extends CalendarPageHeader {
               headerStringBuilder ?? WeekPageHeader._weekStringBuilder,
           headerStyle: headerStyle,
         );
+
   static String _weekStringBuilder(DateTime date, {DateTime? secondaryDate}) =>
       "${date.day} / ${date.month} / ${date.year} to "
       "${secondaryDate != null ? "${secondaryDate.day} / "
           "${secondaryDate.month} / ${secondaryDate.year}" : ""}";
+}
+
+class FullDayHeaderTextConfig {
+  /// Set full day events header text config
+  const FullDayHeaderTextConfig({
+    this.textAlign = TextAlign.center,
+    this.maxLines = 2,
+    this.textOverflow = TextOverflow.ellipsis,
+  });
+
+  final TextAlign textAlign;
+  final int maxLines;
+  final TextOverflow textOverflow;
 }

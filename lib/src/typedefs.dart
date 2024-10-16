@@ -4,14 +4,14 @@
 
 import 'package:flutter/material.dart';
 
-import 'calendar_event_data.dart';
-import 'enumerations.dart';
+import '../calendar_view.dart';
 
 typedef CellBuilder<T extends Object?> = Widget Function(
   DateTime date,
   List<CalendarEventData<T>> event,
   bool isToday,
   bool isInMonth,
+  bool hideDaysNotInMonth,
 );
 
 typedef EventTileBuilder<T extends Object?> = Widget Function(
@@ -46,9 +46,9 @@ typedef WeekDayBuilder = Widget Function(
   int day,
 );
 
-typedef DateWidgetBuilder = Widget Function(
-  DateTime date,
-);
+typedef DateWidgetBuilder = Widget Function(DateTime date);
+
+typedef HeaderTitleCallback = Future<void> Function(DateTime date);
 
 typedef WeekNumberBuilder = Widget? Function(
   DateTime firstDayOfWeek,
@@ -68,7 +68,9 @@ typedef StringProvider = String Function(DateTime date,
     {DateTime? secondaryDate});
 
 typedef WeekPageHeaderBuilder = Widget Function(
-    DateTime startDate, DateTime endDate);
+  DateTime startDate,
+  DateTime endDate,
+);
 
 typedef TileTapCallback<T extends Object?> = void Function(
     CalendarEventData<T> event, DateTime date);
@@ -82,3 +84,24 @@ typedef DateTapCallback = void Function(DateTime date);
 
 typedef EventFilter<T extends Object?> = List<CalendarEventData<T>> Function(
     DateTime date, List<CalendarEventData<T>> events);
+
+/// Comparator for sorting events.
+typedef EventSorter<T extends Object?> = int Function(
+    CalendarEventData<T> a, CalendarEventData<T> b);
+
+typedef CustomHourLinePainter = CustomPainter Function(
+  Color lineColor,
+  double lineHeight,
+  double offset,
+  double minuteHeight,
+  bool showVerticalLine,
+  double verticalLineOffset,
+  LineStyle lineStyle,
+  double dashWidth,
+  double dashSpaceWidth,
+  double emulateVerticalOffsetBy,
+  int startHour,
+  int endHour,
+);
+
+typedef TestPredicate<T> = bool Function(T element);

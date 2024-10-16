@@ -126,7 +126,7 @@ extension DateTimeExtensions on DateTime {
         other.microsecond == microsecond;
   }
 
-  bool get isDayStart => hour % 24 == 0 && minute % 60 == 0;
+  bool get isDayStart => hour == 0 && minute == 0;
 
   @Deprecated(
       "This extension is not being used in this package and will be removed "
@@ -182,4 +182,60 @@ extension DoubleExt on double {
     final seconds = ((this - truncate()) * 60).toInt();
     return Duration(minutes: truncate(), seconds: seconds);
   }
+}
+
+extension MyList<T extends Object?> on List<CalendarEventData<T>> {
+  // Below function will add the new event in sorted manner(startTimeWise) in
+  // the existing list of CalendarEventData.
+
+  void addEventInSortedManner(
+    CalendarEventData<T> event, [
+    EventSorter<T>? sorter,
+  ]) {
+    var addIndex = -1;
+
+    for (var i = 0; i < this.length; i++) {
+      var result = (sorter ?? defaultEventSorter).call(event, this[i]);
+      if (result <= 0) {
+        addIndex = i;
+        break;
+      }
+    }
+
+    if (addIndex > -1) {
+      insert(addIndex, event);
+    } else {
+      add(event);
+    }
+  }
+}
+
+/// Default [EventSorter] for [CalendarEventData]
+/// It will sort the events based on their [CalendarEventData.startTime].
+int defaultEventSorter<T extends Object?>(
+  CalendarEventData<T> a,
+  CalendarEventData<T> b,
+) {
+  return (a.startTime?.getTotalMinutes ?? 0) -
+      (b.startTime?.getTotalMinutes ?? 0);
+}
+
+extension TimerOfDayExtension on TimeOfDay {
+  int get getTotalMinutes => hour * 60 + minute;
+}
+
+extension IntExtension on int {
+  String appendLeadingZero() {
+    return toString().padLeft(2, '0');
+  }
+}
+
+void debugLog(String message) {
+  assert(() {
+    try {
+      debugPrint(message);
+    } catch (e) {} //ignore: empty_catches Suppress exception...
+
+    return false;
+  }(), '');
 }
