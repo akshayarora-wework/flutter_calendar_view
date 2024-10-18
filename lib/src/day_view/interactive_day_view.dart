@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 
 import 'dart:async';
-import 'package:calendar_view/src/painters.dart';
+import '../painters.dart';
 import 'package:flutter/material.dart';
 
 import '../calendar_constants.dart';
@@ -437,86 +437,94 @@ class InteractiveDayViewState<T extends Object?>
   Widget build(BuildContext context) {
     return SafeAreaWrapper(
       option: widget.safeAreaOption,
-      child: SizedBox(
-        width: _width,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: widget.backgroundColor,
-          ),
+      child: LayoutBuilder(builder: (context, constraint) {
+        _width = widget.width ?? constraint.maxWidth;
+        _updateViewDimensions();
+        return SizedBox(
+          width: _width,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               _dayTitleBuilder(_currentDate),
               Expanded(
-                child: SizedBox(
-                  height: _height,
-                  child: PageView.builder(
-                    physics: widget.pageViewPhysics,
-                    itemCount: _totalDays,
-                    controller: _pageController,
-                    onPageChanged: _onPageChange,
-                    itemBuilder: (_, index) {
-                      final date = DateTime(
-                          _minDate.year, _minDate.month, _minDate.day + index);
-                      return ValueListenableBuilder(
-                        valueListenable: _scrollConfiguration,
-                        builder: (_, __, ___) =>
-                            InteractiveInternalDayViewPage<T>(
-                          key: ValueKey(
-                              _hourHeight.toString() + date.toString()),
-                          width: _width,
-                          liveTimeIndicatorSettings: _liveTimeIndicatorSettings,
-                          timeLineBuilder: _timeLineBuilder,
-                          dayDetectorBuilder: _dayDetectorBuilder,
-                          eventTileBuilder: _eventTileBuilder,
-                          heightPerMinute: widget.heightPerMinute,
-                          hourIndicatorSettings: _hourIndicatorSettings,
-                          hourLinePainter: _hourLinePainter,
-                          date: date,
-                          onTileTap: widget.onEventTap,
-                          onTileLongTap: widget.onEventLongTap,
-                          onDateLongPress: widget.onDateLongPress,
-                          onDateTap: widget.onDateTap,
-                          onTileDoubleTap: widget.onEventDoubleTap,
-                          showLiveLine: widget.showLiveTimeLineInAllDays ||
-                              date.compareWithoutTime(DateTime.now()),
-                          timeLineOffset: widget.timeLineOffset,
-                          timeLineWidth: _timeLineWidth,
-                          verticalLineOffset: widget.verticalLineOffset,
-                          showVerticalLine: widget.showVerticalLine,
-                          height: _height,
-                          controller: controller,
-                          hourHeight: _hourHeight,
-                          eventArranger: _eventArranger,
-                          minuteSlotSize: widget.minuteSlotSize,
-                          scrollNotifier: _scrollConfiguration,
-                          fullDayEventBuilder: _fullDayEventBuilder,
-                          showHalfHours: widget.showHalfHours,
-                          showQuarterHours: widget.showQuarterHours,
-                          halfHourIndicatorSettings: _halfHourIndicatorSettings,
-                          startHour: widget.startHour,
-                          endHour: widget.endHour,
-                          quarterHourIndicatorSettings:
-                              _quarterHourIndicatorSettings,
-                          emulateVerticalOffsetBy:
-                              widget.emulateVerticalOffsetBy,
-                          lastScrollOffset: _lastScrollOffset,
-                          dayViewScrollController: _scrollController,
-                          scrollListener: _scrollPageListener,
-                          keepScrollOffset: widget.keepScrollOffset,
-                          selectedEventTileBuilder: _selectedEventTileBuilder,
-                          onEventChanged: _onEventChanged,
-                        ),
-                      );
-                    },
+                child: DecoratedBox(
+                  decoration: BoxDecoration(color: widget.backgroundColor),
+                  child: SizedBox(
+                    height: _height,
+                    child: PageView.builder(
+                      physics: widget.pageViewPhysics,
+                      itemCount: _totalDays,
+                      controller: _pageController,
+                      onPageChanged: _onPageChange,
+                      itemBuilder: (_, index) {
+                        final date = DateTime(
+                          _minDate.year,
+                          _minDate.month,
+                          _minDate.day + index,
+                        );
+                        return ValueListenableBuilder(
+                          valueListenable: _scrollConfiguration,
+                          builder: (_, __, ___) =>
+                              InteractiveInternalDayViewPage<T>(
+                            key: ValueKey(
+                              _hourHeight.toString() + date.toString(),
+                            ),
+                            width: _width,
+                            liveTimeIndicatorSettings:
+                                _liveTimeIndicatorSettings,
+                            timeLineBuilder: _timeLineBuilder,
+                            dayDetectorBuilder: _dayDetectorBuilder,
+                            eventTileBuilder: _eventTileBuilder,
+                            heightPerMinute: widget.heightPerMinute,
+                            hourIndicatorSettings: _hourIndicatorSettings,
+                            hourLinePainter: _hourLinePainter,
+                            date: date,
+                            onTileTap: widget.onEventTap,
+                            onTileLongTap: widget.onEventLongTap,
+                            onDateLongPress: widget.onDateLongPress,
+                            onDateTap: widget.onDateTap,
+                            onTileDoubleTap: widget.onEventDoubleTap,
+                            showLiveLine: widget.showLiveTimeLineInAllDays ||
+                                date.compareWithoutTime(DateTime.now()),
+                            timeLineOffset: widget.timeLineOffset,
+                            timeLineWidth: _timeLineWidth,
+                            verticalLineOffset: widget.verticalLineOffset,
+                            showVerticalLine: widget.showVerticalLine,
+                            height: _height,
+                            controller: controller,
+                            hourHeight: _hourHeight,
+                            eventArranger: _eventArranger,
+                            minuteSlotSize: widget.minuteSlotSize,
+                            scrollNotifier: _scrollConfiguration,
+                            fullDayEventBuilder: _fullDayEventBuilder,
+                            showHalfHours: widget.showHalfHours,
+                            showQuarterHours: widget.showQuarterHours,
+                            halfHourIndicatorSettings:
+                                _halfHourIndicatorSettings,
+                            startHour: widget.startHour,
+                            endHour: widget.endHour,
+                            quarterHourIndicatorSettings:
+                                _quarterHourIndicatorSettings,
+                            emulateVerticalOffsetBy:
+                                widget.emulateVerticalOffsetBy,
+                            lastScrollOffset: _lastScrollOffset,
+                            dayViewScrollController: _scrollController,
+                            scrollListener: _scrollPageListener,
+                            keepScrollOffset: widget.keepScrollOffset,
+                            selectedEventTileBuilder: _selectedEventTileBuilder,
+                            onEventChanged: _onEventChanged,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -541,8 +549,6 @@ class InteractiveDayViewState<T extends Object?>
 
   /// Updates data related to size of this view.
   void _updateViewDimensions() {
-    _width = widget.width ?? MediaQuery.of(context).size.width;
-
     _timeLineWidth = widget.timeLineWidth ?? _width * 0.13;
 
     _liveTimeIndicatorSettings = widget.liveTimeIndicatorSettings ??
@@ -700,7 +706,7 @@ class InteractiveDayViewState<T extends Object?>
     DateTime startDuration,
     DateTime endDuration,
   ) {
-    if (events.isNotEmpty)
+    if (events.isNotEmpty) {
       return RoundedEventTile(
         borderRadius: BorderRadius.circular(10.0),
         title: events[0].title,
@@ -712,8 +718,9 @@ class InteractiveDayViewState<T extends Object?>
         titleStyle: events[0].titleStyle,
         descriptionStyle: events[0].descriptionStyle,
       );
-    else
+    } else {
       return SizedBox.shrink();
+    }
   }
 
   /// Default selectedEventTileBuilder builder. This builder will be used if
@@ -729,7 +736,7 @@ class InteractiveDayViewState<T extends Object?>
     Function(double primaryDelta) reschedule,
     VoidCallback onEditComplete,
   ) {
-    if (events.isNotEmpty)
+    if (events.isNotEmpty) {
       return SelectedRoundedEventTile(
         borderRadius: BorderRadius.circular(10.0),
         title: events[0].title,
@@ -755,7 +762,7 @@ class InteractiveDayViewState<T extends Object?>
           reschedule(value);
         },
       );
-    else
+    } else
       return SizedBox.shrink();
   }
 

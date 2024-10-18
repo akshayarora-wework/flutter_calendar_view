@@ -44,6 +44,8 @@ class CalendarEventData<T extends Object?> {
   /// Define style of description.
   final TextStyle? descriptionStyle;
 
+  final bool isInteractable;
+
   /// {@macro calendar_event_data_doc}
   CalendarEventData({
     required this.title,
@@ -55,6 +57,7 @@ class CalendarEventData<T extends Object?> {
     this.endTime,
     this.titleStyle,
     this.descriptionStyle,
+    this.isInteractable = false,
     DateTime? endDate,
   })  : _endDate = endDate?.withoutTime,
         date = date.withoutTime;

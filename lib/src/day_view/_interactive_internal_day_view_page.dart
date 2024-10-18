@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 
 import '../calendar_event_data.dart';
 import '../components/_internal_components.dart';
@@ -314,6 +315,10 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                             widget.timeLineWidth -
                             widget.hourIndicatorSettings.offset -
                             widget.verticalLineOffset,
+                        selectedCalendarEventData:
+                            widget.controller.allEvents.firstWhereOrNull(
+                          (event) => event.isInteractable,
+                        ),
                       ),
                     ),
                     TimeLine(

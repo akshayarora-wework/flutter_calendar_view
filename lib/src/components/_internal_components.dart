@@ -566,6 +566,19 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                 selectedEvent.value = newEventData;
               },
               () {
+                var event = selectedEvent.value!;
+                var newStartTime =
+                    roundDateTimeToNearest30Minutes(event.startTime!);
+                var newEndTime =
+                    roundDateTimeToNearest30Minutes(event.endTime!);
+                if (newEndTime.difference(newStartTime).inMinutes < 30) {
+                  newEndTime = newStartTime.add(Duration(minutes: 30));
+                }
+                event = event.copyWith(
+                  startTime: newStartTime,
+                  endTime: newEndTime,
+                );
+                selectedEvent.value = event;
                 onEventChanged(selectedEvent.value!);
               },
             );
@@ -573,6 +586,41 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
         ),
       );
     });
+  }
+
+  DateTime roundDateTimeToNearest30Minutes(
+    DateTime dateTime, {
+    bool ceil = false,
+  }) {
+    // Get the number of minutes past the hour
+    int minutes = dateTime.minute;
+
+    // Determine if we should floor or ceil
+    if (ceil) {
+      if (minutes > 0 && minutes <= 30) {
+        // Ceil to 30 minutes past the hour
+        return DateTime(
+            dateTime.year, dateTime.month, dateTime.day, dateTime.hour, 30);
+      } else if (minutes > 30) {
+        // Ceil to the next hour
+        return DateTime(
+            dateTime.year, dateTime.month, dateTime.day, dateTime.hour + 1, 0);
+      }
+    } else {
+      if (minutes >= 30) {
+        // Floor to 30 minutes past the hour
+        return DateTime(
+            dateTime.year, dateTime.month, dateTime.day, dateTime.hour, 30);
+      } else {
+        // Floor to the hour
+        return DateTime(
+            dateTime.year, dateTime.month, dateTime.day, dateTime.hour, 0);
+      }
+    }
+
+    // If minutes are 0, return the same hour as is
+    return DateTime(
+        dateTime.year, dateTime.month, dateTime.day, dateTime.hour, 0);
   }
 
   void _scrollToEvent(BuildContext context) {
@@ -656,6 +704,8 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
   /// Called when user double tap on any event tile.
   final CellTapCallback<T>? onTileDoubleTap;
 
+  final CalendarEventData<T>? selectedCalendarEventData;
+
   /// A widget that display event tiles in day/week view.
   const InteractiveEventLayout({
     Key? key,
@@ -674,6 +724,7 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
     required this.onTileDoubleTap,
     required this.onTileLongTap,
     this.endHour = Constants.hoursADay,
+    this.selectedCalendarEventData,
   }) : super(key: key);
 
   @override
@@ -684,35 +735,41 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
 class _InteractiveEventLayoutState<T extends Object?>
     extends State<InteractiveEventLayout<T>> {
   /// The selected event that can be modified.
-  ValueNotifier<CalendarEventData<T>?> calendarEventData =
-      ValueNotifier<CalendarEventData<T>?>(null);
+  late ValueNotifier<CalendarEventData<T>?> selectedCalendarEventData;
 
   /// The original selected event this is used to replace the
   /// event in the [EventController] when the modification is done.
-  CalendarEventData<T>? selectedCalendarEventData;
+  // CalendarEventData<T>? selectedCalendarEventData;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedCalendarEventData =
+        ValueNotifier<CalendarEventData<T>?>(widget.selectedCalendarEventData);
+  }
 
   /// Called when user taps on event tile.
-  void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
-    widget.onTileTap?.call(events, date);
-    if (calendarEventData.value == null) {
-      selectedCalendarEventData = events.first;
-      calendarEventData.value = selectedCalendarEventData;
-    } else {
-      if (calendarEventData.value! == events.first) {
-        selectedCalendarEventData = null;
-        calendarEventData.value = selectedCalendarEventData;
-      } else {
-        selectedCalendarEventData = events.first;
-        calendarEventData.value = selectedCalendarEventData;
-      }
-    }
-  }
+  // void onTileTap(List<CalendarEventData<T>> events, DateTime date) {
+  //   widget.onTileTap?.call(events, date);
+  //   if (calendarEventData.value == null) {
+  //     selectedCalendarEventData = events.first;
+  //     calendarEventData.value = selectedCalendarEventData;
+  //   } else {
+  //     if (calendarEventData.value! == events.first) {
+  //       selectedCalendarEventData = null;
+  //       calendarEventData.value = selectedCalendarEventData;
+  //     } else {
+  //       selectedCalendarEventData = events.first;
+  //       calendarEventData.value = selectedCalendarEventData;
+  //     }
+  //   }
+  // }
 
-  /// Called when user taps outside of any event tiles.
-  void onTapOutSide() {
-    selectedCalendarEventData = null;
-    calendarEventData.value = selectedCalendarEventData;
-  }
+  // /// Called when user taps outside of any event tiles.
+  // void onTapOutSide() {
+  //   selectedCalendarEventData = null;
+  //   calendarEventData.value = selectedCalendarEventData;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -720,7 +777,7 @@ class _InteractiveEventLayoutState<T extends Object?>
       height: widget.height,
       width: widget.width,
       child: ValueListenableBuilder<CalendarEventData<T>?>(
-        valueListenable: calendarEventData,
+        valueListenable: selectedCalendarEventData,
         builder: (context, value, child) {
           if (value == null) {
             return EventGenerator<T>(
@@ -729,7 +786,7 @@ class _InteractiveEventLayoutState<T extends Object?>
               startHour: widget.startHour,
               onTileLongTap: widget.onTileLongTap,
               onTileDoubleTap: widget.onTileDoubleTap,
-              onTileTap: onTileTap,
+              onTileTap: (_, __) {},
               eventArranger: widget.eventArranger,
               events: widget.controller.getEventsOnDay(widget.date),
               heightPerMinute: widget.heightPerMinute,
@@ -740,20 +797,17 @@ class _InteractiveEventLayoutState<T extends Object?>
           } else {
             return Stack(
               children: [
-                GestureDetector(
-                  onTap: onTapOutSide,
-                ),
                 EventGenerator<T>(
                   height: widget.height,
                   startHour: widget.startHour,
                   onTileLongTap: widget.onTileLongTap,
                   onTileDoubleTap: widget.onTileDoubleTap,
                   date: widget.date,
-                  onTileTap: onTileTap,
+                  onTileTap: (_, __) {},
                   eventArranger: widget.eventArranger,
                   events: widget.controller.getEventsOnDay(widget.date)
                     ..removeWhere(
-                      (element) => element == selectedCalendarEventData,
+                      (element) => element.isInteractable,
                     ),
                   heightPerMinute: widget.heightPerMinute,
                   eventTileBuilder: widget.eventTileBuilder,
@@ -763,18 +817,18 @@ class _InteractiveEventLayoutState<T extends Object?>
                 SelectedEventGenerator<T>(
                   onEventChanged: (modifiedEvent) {
                     widget.controller.replace(
-                      eventDataToReplace: selectedCalendarEventData!,
+                      eventDataToReplace: selectedCalendarEventData.value!,
                       newEventData: modifiedEvent,
                     );
-                    selectedCalendarEventData = modifiedEvent;
+                    selectedCalendarEventData.value = modifiedEvent;
                     widget.onEventChanged(modifiedEvent);
                   },
                   height: widget.height,
                   startHour: widget.startHour,
                   date: widget.date,
-                  onTileTap: onTileTap,
+                  onTileTap: (_, __) {},
                   eventArranger: widget.eventArranger,
-                  selectedEvent: calendarEventData,
+                  selectedEvent: selectedCalendarEventData,
                   heightPerMinute: widget.heightPerMinute,
                   selectedEventTileBuilder: widget.selectedEventTileBuilder,
                   scrollNotifier: widget.scrollNotifier,

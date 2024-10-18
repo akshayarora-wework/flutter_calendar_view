@@ -154,8 +154,10 @@ class EventController<T extends Object?> extends ChangeNotifier {
   ///
   /// To get full day events exclusively, check [getFullDayEvent] method.
   ///
-  List<CalendarEventData<T>> getEventsOnDay(DateTime date,
-      {bool includeFullDayEvents = true}) {
+  List<CalendarEventData<T>> getEventsOnDay(
+    DateTime date, {
+    bool includeFullDayEvents = true,
+  }) {
     //ignore: deprecated_member_use_from_same_package
     if (_eventFilter != null) return _eventFilter!.call(date, this.events);
 
