@@ -2,7 +2,6 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 
 import '../extension.dart';
-import '../model/event.dart';
 import '../widgets/interactive_day_view_widget.dart';
 import 'create_event_page.dart';
 

@@ -703,8 +703,8 @@ class InteractiveDayViewState<T extends Object?>
     DateTime date,
     List<CalendarEventData<T>> events,
     Rect boundary,
-    DateTime startDuration,
-    DateTime endDuration,
+    TimeOfDay startDuration,
+    TimeOfDay endDuration,
   ) {
     if (events.isNotEmpty) {
       return RoundedEventTile(
@@ -729,8 +729,8 @@ class InteractiveDayViewState<T extends Object?>
     DateTime date,
     List<CalendarEventData<T>> events,
     Rect boundary,
-    DateTime startDuration,
-    DateTime endDuration,
+    TimeOfDay startDuration,
+    TimeOfDay endDuration,
     Function(double primaryDelta) changeStartTime,
     Function(double primaryDelta) changeEndTime,
     Function(double primaryDelta) reschedule,

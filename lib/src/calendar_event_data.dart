@@ -16,12 +16,12 @@ class CalendarEventData<T extends Object?> {
   /// Defines the start time of the event.
   /// [endTime] and [startTime] will defines time on same day.
   /// This is required when you are using [CalendarEventData] for [DayView] or [WeekView]
-  final DateTime? startTime;
+  final TimeOfDay? startTime;
 
   /// Defines the end time of the event.
   /// [endTime] and [startTime] defines time on same day.
   /// This is required when you are using [CalendarEventData] for [DayView]
-  final DateTime? endTime;
+  final TimeOfDay? endTime;
 
   /// Title of the event.
   final String title;
@@ -132,8 +132,8 @@ class CalendarEventData<T extends Object?> {
     String? description,
     T? event,
     Color? color,
-    DateTime? startTime,
-    DateTime? endTime,
+    TimeOfDay? startTime,
+    TimeOfDay? endTime,
     TextStyle? titleStyle,
     TextStyle? descriptionStyle,
     DateTime? endDate,
@@ -279,8 +279,8 @@ class CalendarEventData<T extends Object?> {
       return copyWith(
         startTime: newStartTime,
         endTime: newEndTime,
-        date: newStartTime,
-        endDate: newEndTime,
+        date: date,
+        endDate: endDate,
       );
     } else {
       return null;

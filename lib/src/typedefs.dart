@@ -18,16 +18,16 @@ typedef EventTileBuilder<T extends Object?> = Widget Function(
   DateTime date,
   List<CalendarEventData<T>> events,
   Rect boundary,
-  DateTime startDuration,
-  DateTime endDuration,
+  TimeOfDay startDuration,
+  TimeOfDay endDuration,
 );
 
 typedef SelectedEventTileBuilder<T extends Object?> = Widget Function(
   DateTime date,
   List<CalendarEventData<T>> events,
   Rect boundary,
-  DateTime startDuration,
-  DateTime endDuration,
+  TimeOfDay startDuration,
+  TimeOfDay endDuration,
   Function(double primaryDelta) changeStartTime,
   Function(double primaryDelta) changeEndTime,
   Function(double primaryDelta) reschedule,

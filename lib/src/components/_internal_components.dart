@@ -567,10 +567,8 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
               },
               () {
                 var event = selectedEvent.value!;
-                var newStartTime =
-                    roundDateTimeToNearest30Minutes(event.startTime!);
-                var newEndTime =
-                    roundDateTimeToNearest30Minutes(event.endTime!);
+                var newStartTime = roundToNearestHalfHour(event.startTime!);
+                var newEndTime = roundToNearestHalfHour(event.endTime!);
                 if (newEndTime.difference(newStartTime).inMinutes < 30) {
                   newEndTime = newStartTime.add(Duration(minutes: 30));
                 }
@@ -588,39 +586,23 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
     });
   }
 
-  DateTime roundDateTimeToNearest30Minutes(
-    DateTime dateTime, {
-    bool ceil = false,
-  }) {
-    // Get the number of minutes past the hour
-    int minutes = dateTime.minute;
+  static TimeOfDay roundToNearestHalfHour(TimeOfDay timeOfDay) {
+    // Convert TimeOfDay to DateTime to work with minutes easily
+    DateTime dateTime = DateTime(0, 1, 1, timeOfDay.hour, timeOfDay.minute);
 
-    // Determine if we should floor or ceil
-    if (ceil) {
-      if (minutes > 0 && minutes <= 30) {
-        // Ceil to 30 minutes past the hour
-        return DateTime(
-            dateTime.year, dateTime.month, dateTime.day, dateTime.hour, 30);
-      } else if (minutes > 30) {
-        // Ceil to the next hour
-        return DateTime(
-            dateTime.year, dateTime.month, dateTime.day, dateTime.hour + 1, 0);
-      }
-    } else {
-      if (minutes >= 30) {
-        // Floor to 30 minutes past the hour
-        return DateTime(
-            dateTime.year, dateTime.month, dateTime.day, dateTime.hour, 30);
-      } else {
-        // Floor to the hour
-        return DateTime(
-            dateTime.year, dateTime.month, dateTime.day, dateTime.hour, 0);
-      }
-    }
+    // Calculate total minutes since midnight
+    int totalMinutes = dateTime.hour * 60 + dateTime.minute;
 
-    // If minutes are 0, return the same hour as is
-    return DateTime(
-        dateTime.year, dateTime.month, dateTime.day, dateTime.hour, 0);
+    // Round to the nearest 30 minutes
+    int roundedMinutes =
+        ((totalMinutes + 15) ~/ 30) * 30; // Adding 15 to round correctly
+
+    // Calculate the new hour and minute
+    int newHour =
+        (roundedMinutes ~/ 60) % 24; // Ensure it wraps around after 24
+    int newMinute = roundedMinutes % 60;
+
+    return TimeOfDay(hour: newHour, minute: newMinute);
   }
 
   void _scrollToEvent(BuildContext context) {

@@ -133,14 +133,108 @@ extension DateTimeExtensions on DateTime {
       "in next major release. Please use withoutTime instead.")
   DateTime get dateYMD => DateTime(year, month, day);
 
-  /// Returns today's [DateTime] just after midnight.
-  DateTime get startOfToday {
-    return DateTime(year, month, day);
+  TimeOfDay get startOfToday {
+    // Create a DateTime object representing the start of today (midnight)
+    DateTime startOfToday = DateTime(this.year, this.month, this.day);
+    // Return the TimeOfDay representation of midnight
+    return TimeOfDay(hour: startOfToday.hour, minute: startOfToday.minute);
   }
 
   /// Returns today's [DateTime] just before midnight.
-  DateTime get endOfToday {
-    return DateTime(year, month, day, 23, 59, 59, 999, 999);
+  TimeOfDay get endOfToday {
+    // Create a DateTime object representing the end of today (23:59)
+    DateTime endOfToday = DateTime(this.year, this.month, this.day, 23, 59);
+    // Return the TimeOfDay representation of 23:59
+    return TimeOfDay(hour: endOfToday.hour, minute: endOfToday.minute);
+  }
+}
+
+extension TimeOfDayExtensions on TimeOfDay {
+  // /// Returns a new [DateTime] object with hour and minutes calculated from
+  // /// [totalMinutes].
+  TimeOfDay copyFromMinutes([int totalMinutes = 0]) {
+    // Calculate hours and minutes from totalMinutes
+    int hours = totalMinutes ~/ 60;
+    int minutes = totalMinutes % 60;
+
+    // Ensure hours are within 0-23 range
+    hours = hours % 24;
+
+    return TimeOfDay(hour: hours, minute: minutes);
+  }
+
+  // /// Returns [DateTime] without timestamp.
+  // DateTime get withoutTime => DateTime(year, month, day);
+
+  /// Compares time of two [DateTime] objects.
+  bool hasSameTimeAs(TimeOfDay other) {
+    return other.hour == hour && other.minute == minute;
+  }
+
+  bool get isDayStart => hour == 0 && minute == 0;
+
+  TimeOfDay add(Duration duration) {
+    // Convert TimeOfDay to DateTime
+    final now = DateTime.now();
+    final dateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
+    // Add the Duration
+    final newDateTime = dateTime.add(duration);
+
+    // Convert back to TimeOfDay
+    return TimeOfDay(hour: newDateTime.hour, minute: newDateTime.minute);
+  }
+
+  Duration difference(TimeOfDay endTime) {
+    // Convert TimeOfDay to DateTime
+    DateTime startDateTime = DateTime(0, 1, 1, hour, minute);
+    DateTime endDateTime = DateTime(0, 1, 1, endTime.hour, endTime.minute);
+
+    // Calculate the difference
+    Duration difference = endDateTime.difference(startDateTime);
+
+    // If the difference is negative, add 24 hours to get the positive duration
+    if (difference.isNegative) {
+      difference += Duration(hours: 24);
+    }
+
+    return difference;
+  }
+
+  bool isAfter(TimeOfDay other) {
+    // Convert TimeOfDay to minutes since midnight for comparison
+    final thisMinutes = this.hour * 60 + this.minute;
+    final otherMinutes = other.hour * 60 + other.minute;
+    return thisMinutes > otherMinutes;
+  }
+
+  bool isBefore(TimeOfDay other) {
+    // Convert TimeOfDay to minutes since midnight for comparison
+    final thisMinutes = this.hour * 60 + this.minute;
+    final otherMinutes = other.hour * 60 + other.minute;
+    return thisMinutes < otherMinutes;
+  }
+
+  TimeOfDay subtract(Duration duration) {
+    // Convert TimeOfDay to total minutes
+    int totalMinutes = this.hour * 60 + this.minute;
+    // Subtract the duration in minutes
+    totalMinutes -= duration.inMinutes;
+
+    // Handle wrapping around midnight
+    final totalMinutesInADay = 24 * 60;
+    final adjustedMinutes =
+        (totalMinutes % totalMinutesInADay + totalMinutesInADay) %
+            totalMinutesInADay;
+
+    // Convert adjusted minutes back to hours and minutes
+    return TimeOfDay(hour: adjustedMinutes ~/ 60, minute: adjustedMinutes % 60);
   }
 }
 
