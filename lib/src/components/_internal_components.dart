@@ -754,6 +754,12 @@ class _InteractiveEventLayoutState<T extends Object?>
   // }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    selectedCalendarEventData.value = widget.selectedCalendarEventData;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: widget.height,

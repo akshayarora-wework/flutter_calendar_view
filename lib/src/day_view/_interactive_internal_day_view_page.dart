@@ -215,6 +215,12 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: widget.height,
