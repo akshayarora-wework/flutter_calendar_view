@@ -486,6 +486,8 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
   /// First hour displayed in the layout
   final int startHour;
 
+  final double selectedEventBoundaryBoost;
+
   /// A widget that display event tiles in day/week view.
   const SelectedEventGenerator({
     Key? key,
@@ -500,6 +502,7 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
     required this.onTileTap,
     required this.scrollNotifier,
     required this.startHour,
+    this.selectedEventBoundaryBoost = 0,
   }) : super(key: key);
 
   /// Arrange events and returns list of [Widget] that displays event
@@ -518,8 +521,8 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
 
     return List.generate(events.length, (index) {
       return Positioned(
-        top: events[index].top,
-        bottom: events[index].bottom,
+        top: events[index].top - selectedEventBoundaryBoost,
+        bottom: events[index].bottom - selectedEventBoundaryBoost,
         left: events[index].left,
         right: events[index].right,
         child: GestureDetector(
@@ -535,10 +538,11 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
               date,
               events[index].events,
               Rect.fromLTWH(
-                  events[index].left,
-                  events[index].top,
-                  width - events[index].right - events[index].left,
-                  height - events[index].bottom - events[index].top),
+                events[index].left,
+                events[index].top,
+                width - events[index].right - events[index].left,
+                height - events[index].bottom - events[index].top,
+              ),
               events[index].startDuration,
               events[index].endDuration,
               (primaryDelta) {
@@ -546,7 +550,6 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                   primaryDelta: primaryDelta,
                   heightPerMinute: heightPerMinute,
                 );
-
                 selectedEvent.value = newEventData;
               },
               (primaryDelta) {
@@ -651,6 +654,8 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
   /// width of display area
   final double width;
 
+  final double selectedEventBoundaryBoost;
+
   /// Defines height of single minute in day/week view page.
   final double heightPerMinute;
 
@@ -707,6 +712,7 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
     required this.onTileLongTap,
     this.endHour = Constants.hoursADay,
     this.selectedCalendarEventData,
+    this.selectedEventBoundaryBoost = 0,
   }) : super(key: key);
 
   @override
@@ -821,6 +827,7 @@ class _InteractiveEventLayoutState<T extends Object?>
                   selectedEventTileBuilder: widget.selectedEventTileBuilder,
                   scrollNotifier: widget.scrollNotifier,
                   width: widget.width,
+                  selectedEventBoundaryBoost: widget.selectedEventBoundaryBoost,
                 ),
               ],
             );

@@ -81,6 +81,8 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatefulWidget {
   /// Offset  of vertical line.
   final double verticalLineOffset;
 
+  final double selectedEventBoundaryBoost;
+
   /// Called when user taps on event tile.
   final CellTapCallback<T>? onTileTap;
 
@@ -183,6 +185,7 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatefulWidget {
     required this.dayViewScrollController,
     this.keepScrollOffset = false,
     this.lastScrollOffset = 0.0,
+    this.selectedEventBoundaryBoost = 0,
   }) : super(key: key);
 
   @override
@@ -326,6 +329,8 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                             widget.hourIndicatorSettings.offset -
                             widget.verticalLineOffset,
                         selectedCalendarEventData: selectedEventData,
+                        selectedEventBoundaryBoost:
+                            widget.selectedEventBoundaryBoost,
                       ),
                     ),
                     TimeLine(

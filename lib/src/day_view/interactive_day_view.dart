@@ -215,6 +215,8 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   /// Show quarter hour indicator(15min & 45min).
   final bool showQuarterHours;
 
+  final double selectedEventBoundaryBoost;
+
   /// It define the starting duration from where day view page will be visible
   /// By default it will be Duration(hours:0)
   final Duration startDuration;
@@ -283,6 +285,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
     this.onEventDoubleTap,
     this.endHour = Constants.hoursADay,
     this.keepScrollOffset = false,
+    this.selectedEventBoundaryBoost = 0,
   })  : assert(timeLineOffset >= 0,
             "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0,
@@ -470,6 +473,8 @@ class InteractiveDayViewState<T extends Object?>
                             key: ValueKey(
                               _hourHeight.toString() + date.toString(),
                             ),
+                            selectedEventBoundaryBoost:
+                                widget.selectedEventBoundaryBoost,
                             width: _width,
                             liveTimeIndicatorSettings:
                                 _liveTimeIndicatorSettings,
