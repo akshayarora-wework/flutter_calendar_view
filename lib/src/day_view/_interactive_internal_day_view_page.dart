@@ -222,6 +222,9 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
 
   @override
   Widget build(BuildContext context) {
+    var selectedEventData = widget.controller.allEvents.firstWhereOrNull(
+      (event) => event.isInteractable,
+    );
     return Container(
       height: widget.height,
       width: widget.width,
@@ -302,6 +305,7 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                     Align(
                       alignment: Alignment.centerRight,
                       child: InteractiveEventLayout<T>(
+                        key: ObjectKey(selectedEventData),
                         height: widget.height,
                         date: widget.date,
                         onTileLongTap: widget.onTileLongTap,
@@ -321,10 +325,7 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                             widget.timeLineWidth -
                             widget.hourIndicatorSettings.offset -
                             widget.verticalLineOffset,
-                        selectedCalendarEventData:
-                            widget.controller.allEvents.firstWhereOrNull(
-                          (event) => event.isInteractable,
-                        ),
+                        selectedCalendarEventData: selectedEventData,
                       ),
                     ),
                     TimeLine(
