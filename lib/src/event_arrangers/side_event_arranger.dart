@@ -30,6 +30,7 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
     required double height,
     required double width,
     required double heightPerMinute,
+    required double selectedEventBoundaryBoost,
     required int startHour,
   }) {
     final totalWidth = width;
@@ -41,6 +42,7 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
         height: height,
         width: width,
         heightPerMinute: heightPerMinute,
+        selectedEventBoundaryBoost: selectedEventBoundaryBoost,
         startHour: startHour,
       );
 
@@ -117,10 +119,12 @@ class SideEventArranger<T extends Object?> extends EventArranger<T> {
                 (endTime.getTotalMinutes - (startHour * 60) == 0
                         ? Constants.minutesADay - (startHour * 60)
                         : endTime.getTotalMinutes - (startHour * 60)) *
-                    heightPerMinute;
+                    heightPerMinute -
+                selectedEventBoundaryBoost;
 
             final top = (startTime.getTotalMinutes - (startHour * 60)) *
-                heightPerMinute;
+                    heightPerMinute -
+                selectedEventBoundaryBoost;
 
             return OrganizedCalendarEventData<T>(
               left: offset,

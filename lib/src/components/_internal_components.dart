@@ -379,11 +379,13 @@ class EventGenerator<T extends Object?> extends StatelessWidget {
   /// of events and [eventTileBuilder] to display events.
   List<Widget> _generateEvents(BuildContext context) {
     final events = eventArranger.arrange(
-        events: this.events,
-        height: height,
-        width: width,
-        heightPerMinute: heightPerMinute,
-        startHour: startHour);
+      events: this.events,
+      height: height,
+      width: width,
+      heightPerMinute: heightPerMinute,
+      startHour: startHour,
+      selectedEventBoundaryBoost: 0,
+    );
 
     return List.generate(events.length, (index) {
       return Positioned(
@@ -516,13 +518,14 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
       height: height,
       width: width,
       heightPerMinute: heightPerMinute,
+      selectedEventBoundaryBoost: selectedEventBoundaryBoost,
       startHour: startHour,
     );
 
     return List.generate(events.length, (index) {
       return Positioned(
-        top: events[index].top - selectedEventBoundaryBoost,
-        bottom: events[index].bottom - selectedEventBoundaryBoost,
+        top: events[index].top,
+        bottom: events[index].bottom,
         left: events[index].left,
         right: events[index].right,
         child: GestureDetector(

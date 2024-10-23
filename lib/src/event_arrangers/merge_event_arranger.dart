@@ -31,6 +31,7 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
     required double height,
     required double width,
     required double heightPerMinute,
+    required double selectedEventBoundaryBoost,
     required int startHour,
   }) {
     // TODO: Right now all the events that are passed in this function must be
