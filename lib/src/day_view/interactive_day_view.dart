@@ -217,6 +217,8 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
 
   final double selectedEventBoundaryBoost;
 
+  final VoidCallback? onThirtyMinuteUpdate;
+
   /// It define the starting duration from where day view page will be visible
   /// By default it will be Duration(hours:0)
   final Duration startDuration;
@@ -236,6 +238,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   /// Main widget for day view.
   const InteractiveDayView({
     Key? key,
+    this.onThirtyMinuteUpdate,
     this.eventTileBuilder,
     this.selectedEventTileBuilder,
     this.onEventChanged,
@@ -473,6 +476,7 @@ class InteractiveDayViewState<T extends Object?>
                             key: ValueKey(
                               _hourHeight.toString() + date.toString(),
                             ),
+                            onThirtyMinuteUpdate: widget.onThirtyMinuteUpdate,
                             selectedEventBoundaryBoost:
                                 widget.selectedEventBoundaryBoost,
                             width: _width,

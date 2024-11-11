@@ -490,6 +490,8 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
 
   final double selectedEventBoundaryBoost;
 
+  final VoidCallback? onThirtyMinuteUpdate;
+
   /// A widget that display event tiles in day/week view.
   const SelectedEventGenerator({
     Key? key,
@@ -504,6 +506,7 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
     required this.onTileTap,
     required this.scrollNotifier,
     required this.startHour,
+    this.onThirtyMinuteUpdate,
     this.selectedEventBoundaryBoost = 0,
   }) : super(key: key);
 
@@ -554,6 +557,10 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                   heightPerMinute: heightPerMinute,
                 );
                 selectedEvent.value = newEventData;
+                if (selectedEvent.value?.startTime?.minute == 0 ||
+                    selectedEvent.value?.startTime?.minute == 30) {
+                  onThirtyMinuteUpdate?.call();
+                }
               },
               (primaryDelta) {
                 final newEventData = selectedEvent.value!.updateEventEndTime(
@@ -561,6 +568,10 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                   heightPerMinute: heightPerMinute,
                 );
                 selectedEvent.value = newEventData;
+                if (selectedEvent.value?.endTime?.minute == 0 ||
+                    selectedEvent.value?.endTime?.minute == 30) {
+                  onThirtyMinuteUpdate?.call();
+                }
               },
               (primaryDelta) {
                 final newEventData = selectedEvent.value!.rescheduleEvent(
@@ -570,6 +581,10 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
 
                 if (newEventData == null) return;
                 selectedEvent.value = newEventData;
+                if (selectedEvent.value?.startTime?.minute == 0 ||
+                    selectedEvent.value?.startTime?.minute == 30) {
+                  onThirtyMinuteUpdate?.call();
+                }
               },
               () {
                 var event = selectedEvent.value!;
@@ -696,6 +711,8 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
 
   final CalendarEventData<T>? selectedCalendarEventData;
 
+  final VoidCallback? onThirtyMinuteUpdate;
+
   /// A widget that display event tiles in day/week view.
   const InteractiveEventLayout({
     Key? key,
@@ -713,6 +730,7 @@ class InteractiveEventLayout<T extends Object?> extends StatefulWidget {
     required this.startHour,
     required this.onTileDoubleTap,
     required this.onTileLongTap,
+    this.onThirtyMinuteUpdate,
     this.endHour = Constants.hoursADay,
     this.selectedCalendarEventData,
     this.selectedEventBoundaryBoost = 0,
@@ -831,6 +849,7 @@ class _InteractiveEventLayoutState<T extends Object?>
                   scrollNotifier: widget.scrollNotifier,
                   width: widget.width,
                   selectedEventBoundaryBoost: widget.selectedEventBoundaryBoost,
+                  onThirtyMinuteUpdate: widget.onThirtyMinuteUpdate,
                 ),
               ],
             );

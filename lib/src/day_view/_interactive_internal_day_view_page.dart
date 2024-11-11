@@ -32,6 +32,8 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatefulWidget {
   /// Defines how event tile will be displayed.
   final SelectedEventTileBuilder<T> selectedEventTileBuilder;
 
+  final VoidCallback? onThirtyMinuteUpdate;
+
   /// Called when user modifies event.
   final Function(CalendarEventData<T> event) onEventChanged;
 
@@ -183,6 +185,7 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatefulWidget {
     required this.quarterHourIndicatorSettings,
     required this.scrollListener,
     required this.dayViewScrollController,
+    this.onThirtyMinuteUpdate,
     this.keepScrollOffset = false,
     this.lastScrollOffset = 0.0,
     this.selectedEventBoundaryBoost = 0,
@@ -320,6 +323,7 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                         eventTileBuilder: widget.eventTileBuilder,
                         selectedEventTileBuilder:
                             widget.selectedEventTileBuilder,
+                        onThirtyMinuteUpdate: widget.onThirtyMinuteUpdate,
                         onEventChanged: widget.onEventChanged,
                         scrollNotifier: widget.scrollNotifier,
                         startHour: widget.startHour,
