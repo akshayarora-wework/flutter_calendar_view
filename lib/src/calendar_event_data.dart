@@ -242,7 +242,7 @@ class CalendarEventData<T extends Object?> {
 
     if (newEndTime.isBefore(startTime!.add(minimumDuration))) {
       // If the new end time is before the startTime + minimumDuration.
-      newEndTime = endTime!.add(minimumDuration);
+      newEndTime = startTime!.add(minimumDuration);
     } else if (newEndTime.isAfter(date.endOfToday)) {
       // If the new end time is after the end of this day then set it to end
       // of today.

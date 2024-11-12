@@ -603,7 +603,7 @@ class InteractiveDayViewState<T extends Object?>
 
   void _calculateHeights() {
     _hourHeight = widget.heightPerMinute * 60;
-    _height = _hourHeight * Constants.hoursADay;
+    _height = _hourHeight * (widget.endHour - widget.startHour);
   }
 
   void _assignBuilders() {
