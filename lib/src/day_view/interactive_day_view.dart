@@ -690,7 +690,7 @@ class InteractiveDayViewState<T extends Object?>
                     date.month,
                     date.day,
                     0,
-                    minuteSlotSize.minutes * i,
+                    (minuteSlotSize.minutes * i) + (widget.startHour * 60),
                   ),
                 ),
                 child: SizedBox(width: width, height: heightPerSlot),
@@ -921,8 +921,11 @@ class InteractiveDayViewState<T extends Object?>
   /// respectively.
   ///
   ///
-  Future<void> animateToDate(DateTime date,
-      {Duration? duration, Curve? curve}) async {
+  Future<void> animateToDate(
+    DateTime date, {
+    Duration? duration,
+    Curve? curve,
+  }) async {
     if (date.isBefore(_minDate) || date.isAfter(_maxDate)) {
       throw "Invalid date selected.";
     }
