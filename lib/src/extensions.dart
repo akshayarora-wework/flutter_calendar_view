@@ -133,19 +133,25 @@ extension DateTimeExtensions on DateTime {
       "in next major release. Please use withoutTime instead.")
   DateTime get dateYMD => DateTime(year, month, day);
 
-  TimeOfDay get startOfToday {
+  TimeOfDay getStartOfToday({int? startHour}) {
     // Create a DateTime object representing the start of today (midnight)
     DateTime startOfToday = DateTime(this.year, this.month, this.day);
     // Return the TimeOfDay representation of midnight
-    return TimeOfDay(hour: startOfToday.hour, minute: startOfToday.minute);
+    return TimeOfDay(
+      hour: startHour ?? startOfToday.hour,
+      minute: startOfToday.minute,
+    );
   }
 
   /// Returns today's [DateTime] just before midnight.
-  TimeOfDay get endOfToday {
+  TimeOfDay getEndOfToday({int? endHour}) {
     // Create a DateTime object representing the end of today (23:59)
     DateTime endOfToday = DateTime(this.year, this.month, this.day, 23, 59);
     // Return the TimeOfDay representation of 23:59
-    return TimeOfDay(hour: endOfToday.hour, minute: endOfToday.minute);
+    return TimeOfDay(
+      hour: endHour != null ? endHour - 1 : endOfToday.hour,
+      minute: endOfToday.minute,
+    );
   }
 }
 

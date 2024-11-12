@@ -188,6 +188,7 @@ class CalendarEventData<T extends Object?> {
   CalendarEventData<T>? updateEventStartTime({
     required double primaryDelta,
     required double heightPerMinute,
+    required int startHour,
     Duration minimumDuration = const Duration(minutes: 15),
   }) {
     assert(
@@ -208,10 +209,12 @@ class CalendarEventData<T extends Object?> {
     if (newStartTime.isAfter(endTime!.subtract(minimumDuration))) {
       // If the new start time is after the endTime - minimumDuration.
       newStartTime = endTime!.subtract(minimumDuration);
-    } else if (newStartTime.isBefore(date.startOfToday)) {
+    } else if (newStartTime.isBefore(
+      date.getStartOfToday(startHour: startHour),
+    )) {
       // If the new start time is before the start of this day then set it to
       // start of today.
-      newStartTime = date.startOfToday;
+      newStartTime = date.getStartOfToday(startHour: startHour);
     }
 
     return copyWith(
@@ -223,6 +226,7 @@ class CalendarEventData<T extends Object?> {
   CalendarEventData<T>? updateEventEndTime({
     required double primaryDelta,
     required double heightPerMinute,
+    required int endHour,
     Duration minimumDuration = const Duration(minutes: 15),
   }) {
     assert(
@@ -243,10 +247,10 @@ class CalendarEventData<T extends Object?> {
     if (newEndTime.isBefore(startTime!.add(minimumDuration))) {
       // If the new end time is before the startTime + minimumDuration.
       newEndTime = startTime!.add(minimumDuration);
-    } else if (newEndTime.isAfter(date.endOfToday)) {
+    } else if (newEndTime.isAfter(date.getEndOfToday(endHour: endHour))) {
       // If the new end time is after the end of this day then set it to end
       // of today.
-      newEndTime = date.endOfToday;
+      newEndTime = date.getEndOfToday(endHour: endHour);
     }
 
     return copyWith(
@@ -258,6 +262,8 @@ class CalendarEventData<T extends Object?> {
   CalendarEventData<T>? rescheduleEvent({
     required double primaryDelta,
     required double heightPerMinute,
+    required int startHour,
+    required int endHour,
   }) {
     assert(
       startTime != null,
@@ -275,8 +281,8 @@ class CalendarEventData<T extends Object?> {
     // Calculate the new end time.
     final newEndTime = endTime!.add(deltaDuration);
 
-    if (newStartTime.isAfter(date.startOfToday) &&
-        newEndTime.isBefore(date.endOfToday)) {
+    if (newStartTime.isAfter(date.getStartOfToday(startHour: startHour)) &&
+        newEndTime.isBefore(date.getEndOfToday(endHour: endHour))) {
       // If the new start time is after the start of this day and before the end
       // of this day.
       return copyWith(
@@ -286,7 +292,23 @@ class CalendarEventData<T extends Object?> {
         endDate: endDate,
       );
     } else {
-      return null;
+      if (newStartTime.isBefore(date.getStartOfToday(startHour: startHour))) {
+        return copyWith(
+          startTime: date.getStartOfToday(startHour: startHour),
+          endTime: date.getStartOfToday(startHour: startHour).add(duration),
+          date: date,
+          endDate: endDate,
+        );
+      } else if (newEndTime.isAfter(date.getEndOfToday(endHour: endHour))) {
+        return copyWith(
+          startTime: date.getEndOfToday(endHour: endHour).subtract(duration),
+          endTime: date.getEndOfToday(endHour: endHour),
+          date: date,
+          endDate: endDate,
+        );
+      } else {
+        return null;
+      }
     }
   }
 }

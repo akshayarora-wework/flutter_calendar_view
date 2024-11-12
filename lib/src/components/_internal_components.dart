@@ -488,6 +488,9 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
   /// First hour displayed in the layout
   final int startHour;
 
+  /// This field will be used to set end hour for day and week view
+  final int endHour;
+
   final double selectedEventBoundaryBoost;
 
   final VoidCallback? onThirtyMinuteUpdate;
@@ -506,6 +509,7 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
     required this.onTileTap,
     required this.scrollNotifier,
     required this.startHour,
+    this.endHour = Constants.hoursADay,
     this.onThirtyMinuteUpdate,
     this.selectedEventBoundaryBoost = 0,
   }) : super(key: key);
@@ -555,6 +559,7 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                 final newEventData = selectedEvent.value!.updateEventStartTime(
                   primaryDelta: primaryDelta,
                   heightPerMinute: heightPerMinute,
+                  startHour: startHour,
                 );
                 selectedEvent.value = newEventData;
                 if (selectedEvent.value?.startTime?.minute == 0 ||
@@ -566,6 +571,7 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                 final newEventData = selectedEvent.value!.updateEventEndTime(
                   primaryDelta: primaryDelta,
                   heightPerMinute: heightPerMinute,
+                  endHour: endHour,
                 );
                 selectedEvent.value = newEventData;
                 if (selectedEvent.value?.endTime?.minute == 0 ||
@@ -577,6 +583,8 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                 final newEventData = selectedEvent.value!.rescheduleEvent(
                   primaryDelta: primaryDelta,
                   heightPerMinute: heightPerMinute,
+                  startHour: startHour,
+                  endHour: endHour,
                 );
 
                 if (newEventData == null) return;
@@ -840,6 +848,7 @@ class _InteractiveEventLayoutState<T extends Object?>
                   },
                   height: widget.height,
                   startHour: widget.startHour,
+                  endHour: widget.endHour,
                   date: widget.date,
                   onTileTap: (_, __) {},
                   eventArranger: widget.eventArranger,
