@@ -173,8 +173,8 @@ extension TimeOfDayExtensions on TimeOfDay {
   // DateTime get withoutTime => DateTime(year, month, day);
 
   /// Compares time of two [DateTime] objects.
-  bool hasSameTimeAs(TimeOfDay other) {
-    return other.hour == hour && other.minute == minute;
+  bool hasSameTimeAs(TimeOfDay? other) {
+    return other?.hour == hour && other?.minute == minute;
   }
 
   bool get isDayStart => hour == 0 && minute == 0;
@@ -242,6 +242,8 @@ extension TimeOfDayExtensions on TimeOfDay {
     // Convert adjusted minutes back to hours and minutes
     return TimeOfDay(hour: adjustedMinutes ~/ 60, minute: adjustedMinutes % 60);
   }
+
+  int get getTotalMinutes => hour * 60 + minute;
 }
 
 extension ColorExtension on Color {
@@ -318,10 +320,6 @@ int defaultEventSorter<T extends Object?>(
 ) {
   return (a.startTime?.getTotalMinutes ?? 0) -
       (b.startTime?.getTotalMinutes ?? 0);
-}
-
-extension TimerOfDayExtension on TimeOfDay {
-  int get getTotalMinutes => hour * 60 + minute;
 }
 
 extension IntExtension on int {

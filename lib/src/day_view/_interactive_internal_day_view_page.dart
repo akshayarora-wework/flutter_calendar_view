@@ -265,7 +265,7 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                         highlightColor:
                             widget.shimmerHighlightColor ?? Colors.white,
                         direction: ShimmerDirection.ttb,
-                        period: Duration(milliseconds: 1500),
+                        period: Duration(milliseconds: 1200),
                         child: CustomPaint(
                           size: Size(widget.width, widget.height),
                           painter: widget.hourLinePainter(
@@ -381,7 +381,7 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                         highlightColor:
                             widget.shimmerHighlightColor ?? Colors.white,
                         direction: ShimmerDirection.ttb,
-                        period: Duration(milliseconds: 1500),
+                        period: Duration(milliseconds: 1200),
                         child: TimeLine(
                           height: widget.height,
                           hourHeight: widget.hourHeight,

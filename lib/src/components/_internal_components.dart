@@ -561,11 +561,14 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                   heightPerMinute: heightPerMinute,
                   startHour: startHour,
                 );
-                selectedEvent.value = newEventData;
-                if (selectedEvent.value?.startTime?.minute == 0 ||
-                    selectedEvent.value?.startTime?.minute == 30) {
-                  onThirtyMinuteUpdate?.call();
+                if (selectedEvent.value?.startTime != newEventData?.startTime ||
+                    selectedEvent.value?.endTime != newEventData?.endTime) {
+                  if (selectedEvent.value?.startTime?.minute == 0 ||
+                      selectedEvent.value?.startTime?.minute == 30) {
+                    onThirtyMinuteUpdate?.call();
+                  }
                 }
+                selectedEvent.value = newEventData;
               },
               (primaryDelta) {
                 final newEventData = selectedEvent.value!.updateEventEndTime(
@@ -588,11 +591,14 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
                 );
 
                 if (newEventData == null) return;
-                selectedEvent.value = newEventData;
-                if (selectedEvent.value?.startTime?.minute == 0 ||
-                    selectedEvent.value?.startTime?.minute == 30) {
-                  onThirtyMinuteUpdate?.call();
+                if (selectedEvent.value?.startTime != newEventData?.startTime ||
+                    selectedEvent.value?.endTime != newEventData?.endTime) {
+                  if (selectedEvent.value?.startTime?.minute == 0 ||
+                      selectedEvent.value?.startTime?.minute == 30) {
+                    onThirtyMinuteUpdate?.call();
+                  }
                 }
+                selectedEvent.value = newEventData;
               },
               () {
                 var event = selectedEvent.value!;
