@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../calendar_event_data.dart';
 import '../components/_internal_components.dart';
@@ -145,6 +146,12 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatefulWidget {
   /// Flag to keep scrollOffset of pages on page change
   final bool keepScrollOffset;
 
+  final bool isLoading;
+
+  final Color? shimmerBaseColor;
+
+  final Color? shimmerHighlightColor;
+
   /// Defines a single day page.
   const InteractiveInternalDayViewPage({
     Key? key,
@@ -185,6 +192,9 @@ class InteractiveInternalDayViewPage<T extends Object?> extends StatefulWidget {
     required this.quarterHourIndicatorSettings,
     required this.scrollListener,
     required this.dayViewScrollController,
+    required this.isLoading,
+    this.shimmerBaseColor,
+    this.shimmerHighlightColor,
     this.onThirtyMinuteUpdate,
     this.keepScrollOffset = false,
     this.lastScrollOffset = 0.0,
@@ -232,6 +242,7 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
       (event) => event.isInteractable,
     );
     return Container(
+      key: ValueKey(widget.isLoading),
       height: widget.height,
       width: widget.width,
       child: Column(
@@ -248,24 +259,51 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                 width: widget.width,
                 child: Stack(
                   children: [
-                    CustomPaint(
-                      size: Size(widget.width, widget.height),
-                      painter: widget.hourLinePainter(
-                        widget.hourIndicatorSettings.color,
-                        widget.hourIndicatorSettings.height,
-                        widget.timeLineWidth +
-                            widget.hourIndicatorSettings.offset,
-                        widget.heightPerMinute,
-                        widget.showVerticalLine,
-                        widget.verticalLineOffset,
-                        widget.hourIndicatorSettings.lineStyle,
-                        widget.hourIndicatorSettings.dashWidth,
-                        widget.hourIndicatorSettings.dashSpaceWidth,
-                        widget.emulateVerticalOffsetBy,
-                        widget.startHour,
-                        widget.endHour,
+                    if (widget.isLoading)
+                      Shimmer.fromColors(
+                        baseColor: widget.shimmerBaseColor ?? Colors.grey,
+                        highlightColor:
+                            widget.shimmerHighlightColor ?? Colors.white,
+                        direction: ShimmerDirection.ttb,
+                        period: Duration(milliseconds: 1500),
+                        child: CustomPaint(
+                          size: Size(widget.width, widget.height),
+                          painter: widget.hourLinePainter(
+                            widget.hourIndicatorSettings.color,
+                            widget.hourIndicatorSettings.height,
+                            widget.timeLineWidth +
+                                widget.hourIndicatorSettings.offset,
+                            widget.heightPerMinute,
+                            widget.showVerticalLine,
+                            widget.verticalLineOffset,
+                            widget.hourIndicatorSettings.lineStyle,
+                            widget.hourIndicatorSettings.dashWidth,
+                            widget.hourIndicatorSettings.dashSpaceWidth,
+                            widget.emulateVerticalOffsetBy,
+                            widget.startHour,
+                            widget.endHour,
+                          ),
+                        ),
+                      )
+                    else
+                      CustomPaint(
+                        size: Size(widget.width, widget.height),
+                        painter: widget.hourLinePainter(
+                          widget.hourIndicatorSettings.color,
+                          widget.hourIndicatorSettings.height,
+                          widget.timeLineWidth +
+                              widget.hourIndicatorSettings.offset,
+                          widget.heightPerMinute,
+                          widget.showVerticalLine,
+                          widget.verticalLineOffset,
+                          widget.hourIndicatorSettings.lineStyle,
+                          widget.hourIndicatorSettings.dashWidth,
+                          widget.hourIndicatorSettings.dashSpaceWidth,
+                          widget.emulateVerticalOffsetBy,
+                          widget.startHour,
+                          widget.endHour,
+                        ),
                       ),
-                    ),
                     if (widget.showHalfHours)
                       CustomPaint(
                         size: Size(widget.width, widget.height),
@@ -337,20 +375,43 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                             widget.selectedEventBoundaryBoost,
                       ),
                     ),
-                    TimeLine(
-                      height: widget.height,
-                      hourHeight: widget.hourHeight,
-                      timeLineBuilder: widget.timeLineBuilder,
-                      timeLineOffset: widget.timeLineOffset,
-                      timeLineWidth: widget.timeLineWidth,
-                      showHalfHours: widget.showHalfHours,
-                      startHour: widget.startHour,
-                      endHour: widget.endHour,
-                      showQuarterHours: widget.showQuarterHours,
-                      key: ValueKey(widget.heightPerMinute),
-                      liveTimeIndicatorSettings:
-                          widget.liveTimeIndicatorSettings,
-                    ),
+                    if (widget.isLoading)
+                      Shimmer.fromColors(
+                        baseColor: widget.shimmerBaseColor ?? Colors.grey,
+                        highlightColor:
+                            widget.shimmerHighlightColor ?? Colors.white,
+                        direction: ShimmerDirection.ttb,
+                        period: Duration(milliseconds: 1500),
+                        child: TimeLine(
+                          height: widget.height,
+                          hourHeight: widget.hourHeight,
+                          timeLineBuilder: widget.timeLineBuilder,
+                          timeLineOffset: widget.timeLineOffset,
+                          timeLineWidth: widget.timeLineWidth,
+                          showHalfHours: widget.showHalfHours,
+                          startHour: widget.startHour,
+                          endHour: widget.endHour,
+                          showQuarterHours: widget.showQuarterHours,
+                          key: ValueKey(widget.heightPerMinute),
+                          liveTimeIndicatorSettings:
+                              widget.liveTimeIndicatorSettings,
+                        ),
+                      )
+                    else
+                      TimeLine(
+                        height: widget.height,
+                        hourHeight: widget.hourHeight,
+                        timeLineBuilder: widget.timeLineBuilder,
+                        timeLineOffset: widget.timeLineOffset,
+                        timeLineWidth: widget.timeLineWidth,
+                        showHalfHours: widget.showHalfHours,
+                        startHour: widget.startHour,
+                        endHour: widget.endHour,
+                        showQuarterHours: widget.showQuarterHours,
+                        key: ValueKey(widget.heightPerMinute),
+                        liveTimeIndicatorSettings:
+                            widget.liveTimeIndicatorSettings,
+                      ),
                     if (widget.showLiveLine &&
                         widget.liveTimeIndicatorSettings.height > 0)
                       IgnorePointer(

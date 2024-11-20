@@ -235,6 +235,12 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
   /// Flag to keep scrollOffset of pages on page change
   final bool keepScrollOffset;
 
+  final bool isLoading;
+
+  final Color? shimmerBaseColor;
+
+  final Color? shimmerHighlightColor;
+
   /// Main widget for day view.
   const InteractiveDayView({
     Key? key,
@@ -288,6 +294,9 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
     this.onEventDoubleTap,
     this.endHour = Constants.hoursADay,
     this.keepScrollOffset = false,
+    this.isLoading = false,
+    this.shimmerBaseColor,
+    this.shimmerHighlightColor,
     this.selectedEventBoundaryBoost = 0,
   })  : assert(timeLineOffset >= 0,
             "timeLineOffset must be greater than or equal to 0"),
@@ -476,6 +485,9 @@ class InteractiveDayViewState<T extends Object?>
                             key: ValueKey(
                               _hourHeight.toString() + date.toString(),
                             ),
+                            isLoading: widget.isLoading,
+                            shimmerBaseColor: widget.shimmerBaseColor,
+                            shimmerHighlightColor: widget.shimmerHighlightColor,
                             onThirtyMinuteUpdate: widget.onThirtyMinuteUpdate,
                             selectedEventBoundaryBoost:
                                 widget.selectedEventBoundaryBoost,
