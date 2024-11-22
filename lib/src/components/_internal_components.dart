@@ -802,7 +802,12 @@ class _InteractiveEventLayoutState<T extends Object?>
 
   @override
   Widget build(BuildContext context) {
+    final nonInteractableEvents = widget.controller.getEventsOnDay(widget.date)
+      ..removeWhere(
+        (element) => element.isInteractable,
+      );
     return Container(
+      key: ValueKey(nonInteractableEvents.length),
       height: widget.height,
       width: widget.width,
       child: ValueListenableBuilder<CalendarEventData<T>?>(
@@ -817,7 +822,7 @@ class _InteractiveEventLayoutState<T extends Object?>
               onTileDoubleTap: widget.onTileDoubleTap,
               onTileTap: (_, __) {},
               eventArranger: widget.eventArranger,
-              events: widget.controller.getEventsOnDay(widget.date),
+              events: nonInteractableEvents,
               heightPerMinute: widget.heightPerMinute,
               eventTileBuilder: widget.eventTileBuilder,
               scrollNotifier: widget.scrollNotifier,
@@ -834,10 +839,7 @@ class _InteractiveEventLayoutState<T extends Object?>
                   date: widget.date,
                   onTileTap: (_, __) {},
                   eventArranger: widget.eventArranger,
-                  events: widget.controller.getEventsOnDay(widget.date)
-                    ..removeWhere(
-                      (element) => element.isInteractable,
-                    ),
+                  events: nonInteractableEvents,
                   heightPerMinute: widget.heightPerMinute,
                   eventTileBuilder: widget.eventTileBuilder,
                   scrollNotifier: widget.scrollNotifier,
