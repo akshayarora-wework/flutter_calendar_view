@@ -241,6 +241,8 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
 
   final Color? shimmerHighlightColor;
 
+  final double heightPadding;
+
   /// Main widget for day view.
   const InteractiveDayView({
     Key? key,
@@ -298,6 +300,7 @@ class InteractiveDayView<T extends Object?> extends StatefulWidget {
     this.shimmerBaseColor,
     this.shimmerHighlightColor,
     this.selectedEventBoundaryBoost = 0,
+    this.heightPadding = 0,
   })  : assert(timeLineOffset >= 0,
             "timeLineOffset must be greater than or equal to 0"),
         assert(width == null || width > 0,
@@ -482,6 +485,7 @@ class InteractiveDayViewState<T extends Object?>
                           valueListenable: _scrollConfiguration,
                           builder: (_, __, ___) =>
                               InteractiveInternalDayViewPage<T>(
+                            heightPadding: widget.heightPadding,
                             key: ValueKey(
                               _hourHeight.toString() + date.toString(),
                             ),
@@ -994,6 +998,23 @@ class InteractiveDayViewState<T extends Object?>
   }) {
     _scrollController.animateTo(
       offset,
+      duration: duration,
+      curve: curve,
+    );
+  }
+
+  /// Animate to specific scroll controller offset
+  void animateToTime(
+    TimeOfDay time, {
+    Duration duration = const Duration(milliseconds: 200),
+    Curve curve = Curves.linear,
+  }) {
+    final maxOffset = scrollController.position.maxScrollExtent;
+    final totalMinutes = (widget.endHour - widget.startHour) * 60;
+    final minutesToScroll = (time.hour - widget.startHour) * 60 + time.minute;
+    final offsetToScrollTo = (minutesToScroll * maxOffset) / totalMinutes;
+    _scrollController.animateTo(
+      offsetToScrollTo,
       duration: duration,
       curve: curve,
     );

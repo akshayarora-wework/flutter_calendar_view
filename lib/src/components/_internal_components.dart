@@ -226,8 +226,9 @@ class _TimeLineState extends State<TimeLine> {
         minHeight: widget.height,
       ),
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          for (int i = widget.startHour + 1; i < widget.endHour; i++)
+          for (int i = widget.startHour; i <= widget.endHour; i++)
             _timelinePositioned(
               topPosition: widget.hourHeight * (i - widget.startHour) -
                   widget.timeLineOffset,
@@ -666,6 +667,7 @@ class SelectedEventGenerator<T extends Object?> extends StatelessWidget {
       height: height,
       width: width,
       child: Stack(
+        clipBehavior: Clip.none,
         children: _generateEvents(context),
       ),
     );
@@ -830,6 +832,7 @@ class _InteractiveEventLayoutState<T extends Object?>
             );
           } else {
             return Stack(
+              clipBehavior: Clip.none,
               children: [
                 EventGenerator<T>(
                   height: widget.height,
