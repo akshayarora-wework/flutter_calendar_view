@@ -349,7 +349,7 @@ class _InteractiveInternalDayViewPageState<T extends Object?>
                     Align(
                       alignment: Alignment.centerRight,
                       child: InteractiveEventLayout<T>(
-                        key: ObjectKey(selectedEventData),
+                        // key: ObjectKey(selectedEventData),
                         height: widget.height,
                         date: widget.date,
                         onTileLongTap: widget.onTileLongTap,
