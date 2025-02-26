@@ -445,6 +445,7 @@ class EventGenerator<T extends Object?> extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: Use SizedBox If possible.
     return Container(
+      key: key,
       height: height,
       width: width,
       child: Stack(
@@ -807,7 +808,7 @@ class _InteractiveEventLayoutState<T extends Object?>
         (element) => element.isInteractable,
       );
     return Container(
-      key: ValueKey(nonInteractableEvents.length),
+      // key: ValueKey(nonInteractableEvents.length),
       height: widget.height,
       width: widget.width,
       child: ValueListenableBuilder<CalendarEventData<T>?>(
@@ -815,6 +816,7 @@ class _InteractiveEventLayoutState<T extends Object?>
         builder: (context, value, child) {
           if (value == null) {
             return EventGenerator<T>(
+              key: ObjectKey(nonInteractableEvents),
               height: widget.height,
               date: widget.date,
               startHour: widget.startHour,
@@ -832,6 +834,7 @@ class _InteractiveEventLayoutState<T extends Object?>
             return Stack(
               children: [
                 EventGenerator<T>(
+                  key: ValueKey(nonInteractableEvents.length),
                   height: widget.height,
                   startHour: widget.startHour,
                   onTileLongTap: widget.onTileLongTap,
@@ -846,6 +849,7 @@ class _InteractiveEventLayoutState<T extends Object?>
                   width: widget.width,
                 ),
                 SelectedEventGenerator<T>(
+                  // key: ObjectKey(value),
                   onEventChanged: (modifiedEvent) {
                     widget.controller.replace(
                       eventDataToReplace: selectedCalendarEventData.value!,
