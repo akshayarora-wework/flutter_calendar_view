@@ -95,10 +95,11 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
       }
 
       if (eventIndex == -1) {
-        final top = eventStart * heightPerMinute;
-        final bottom = eventEnd * heightPerMinute == height
-            ? 0.0
-            : height - eventEnd * heightPerMinute;
+        final top = eventStart * heightPerMinute - selectedEventBoundaryBoost;
+        final bottom = (eventEnd * heightPerMinute == height
+                ? 0.0
+                : height - eventEnd * heightPerMinute) -
+            selectedEventBoundaryBoost;
 
         final newEvent = OrganizedCalendarEventData<T>(
           top: top,
@@ -124,10 +125,12 @@ class MergeEventArranger<T extends Object?> extends EventArranger<T> {
         final startDuration = math.min(eventStart, arrangedEventStart);
         final endDuration = math.max(eventEnd, arrangedEventEnd);
 
-        final top = startDuration * heightPerMinute;
-        final bottom = endDuration * heightPerMinute == height
-            ? 0.0
-            : height - endDuration * heightPerMinute;
+        final top =
+            startDuration * heightPerMinute - selectedEventBoundaryBoost;
+        final bottom = (endDuration * heightPerMinute == height
+                ? 0.0
+                : height - endDuration * heightPerMinute) -
+            selectedEventBoundaryBoost;
 
         final newEvent = OrganizedCalendarEventData<T>(
           top: top,
